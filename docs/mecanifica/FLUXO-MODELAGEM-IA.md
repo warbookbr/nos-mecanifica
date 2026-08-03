@@ -95,12 +95,14 @@ conferi-las assim que ela aparece.
 Identidade é sempre um nome semântico estável. São proibidos UUIDs, índices de
 face, corpo ou passo, caminhos absolutos, timestamps, `data:` URI e base64.
 
-`revisao.json` usa versão 3: além da aparência semântica, separa o id estável
-do rótulo da porta e preserva a `interface` geométrica quando o descritor
-oficial a publica. Revisões v1 e v2 já gravadas continuam legíveis e estritas,
-mas não ganham aparência nem interface retroativamente; uma revisão nova nasce
-v3. Isso preserva evidência histórica sem fingir que sabemos reconstruir
-material ou encaixe a partir de PNG.
+`revisao.json` usa versão 4: além da aparência semântica, do id estável/rótulo
+e da `interface` publicada, cada parte traz uma assinatura SHA-256 da sua malha
+canônica. Ela é calculada por ciclos de coordenadas, ordenados sem ids de face
+ou vértice; portanto detecta mudança interna como centro de furo, mas ignora
+ordem de `Map`, rotação/inversão do ciclo e renumeração interna. O JSON persiste
+só o hash por parte — não listas cruas de vértices/faces, UUIDs ou estado de
+runtime. Revisões v1, v2 e v3 já gravadas continuam legíveis e estritas, sem
+ganhar campos retroativamente; uma revisão nova nasce v4.
 
 As referências usam `https://` ou `repo://`. Hash SHA-256 é obrigatório quando
 a referência sustenta medida ou aceite. Em `repo://`, o validador exige arquivo
@@ -144,8 +146,8 @@ modo padrão é refinamento, e criação exige a lista semântica de partes.
 nomes existentes. `revisar:modelagem` reutiliza a descrição neutra e a bancada;
 não mantém uma segunda régua geométrica e recusa faces, partes ou materiais que
 ultrapassem o orçamento declarado. `comparar:revisao` compara assinaturas,
-partes, caixas, relações, portas, aparência e contagens; as imagens continuam
-sendo lidas por uma IA ou pessoa nas mesmas câmeras.
+geometria por parte, caixas, relações, portas, aparência e contagens; as
+imagens continuam sendo lidas por uma IA ou pessoa nas mesmas câmeras.
 
 Uma revisão aceita continua nascendo por promoção atômica e nunca é
 sobrescrita. Uma recusa não some mais: fica em `tentativas/`, identificada pela

@@ -5,7 +5,7 @@
 > projeção. `npm run mapa:check` (CI) falha se isto estiver velho ou se
 > algum arquivo-fonte estiver sem cabeçalho.
 
-282 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
+283 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
 
 ## (raiz)
 
@@ -255,6 +255,7 @@
 ## src/autoria/
 
 - `adaptar-three.js` — adaptar-three.js — adaptador neutro do núcleo da Oficina para Three.js; não altera o formato persistido.
+- `assinatura-geometria.js` — assinatura-geometria.js — SHA-256 síncrono e portátil para os contratos de autoria. Não usa `node:crypto`: a descrição também roda na bancada.
 - `descrever-partes.js` — descrever-partes.js — mede uma peça da Oficina POR NOME de parte, sem Three.js: caixa alinhada aos eixos, centro, dimensões e faces de cada parte, e a folga …
 - `hierarquia-partes.js` — hierarquia-partes.js — consultas puras e determinísticas da árvore semântica. Não conhece Three.js, geometria ou domínio mecânico.
 - `interfaces-montagem.js` — interfaces-montagem.js — resolve portas declaradas por peças, mede relações cilíndricas/anulares e deriva uma prévia cilíndrica sem Three.js, hierarquia ou s…

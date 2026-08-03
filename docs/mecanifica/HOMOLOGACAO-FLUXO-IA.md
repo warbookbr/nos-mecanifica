@@ -215,6 +215,15 @@ registrou a mudança intencional de hash com as mesmas 480 vértices e 432 faces
 Portanto a evidência visual e o gabarito comprovam a iteração; o diff de
 revisão confirma que não houve regressão nos campos que ele cobre. A costura
 topológica do `lathe` permanece registrada, sem alteração geométrica.
+
+Essa lacuna foi corrigida no contrato v4 sem reescrever `r001` ou `r002`:
+`descreverPeca()` passa a emitir, por parte, SHA-256 de ciclos de coordenadas
+canônicos. A revisão persiste somente esse hash, não IDs, listas de faces ou
+vértices. A regressão mínima move um furo interno mantendo caixas, contagens,
+partes, interfaces e aparência; ela agora muda `assinaturaModelo` e aparece em
+`comparar:revisao.geometria.partes.alteradas`. A mesma malha reenumerada ou com
+ordem de `Map` diferente mantém o hash. Revisões v1, v2 e v3 continuam
+validadas como evidência histórica.
 As verificações completas passaram: 46 arquivos e 1.023 testes, typecheck,
 build, guards de portas e câmera, mapa, documentação, planos, gabarito, IDs
 crus e exportação.
@@ -233,8 +242,8 @@ Gate proposto:
 
 1. **feito:** validar e canonicalizar as formas de interface que
    `descreverPeca()` emite;
-2. **preservado:** manter revisões históricas v1 e v2 verificáveis, além do
-   contrato v3 atual;
+2. **preservado:** manter revisões históricas v1, v2 e v3 verificáveis, além do
+   contrato v4 atual;
 3. **feito:** provar que a interface participa da assinatura e que mudar
    somente seu raio obsoleta a crítica anterior;
 4. **feito:** fazer `homologacao-mancal` gerar `r001` pelo comando oficial;
