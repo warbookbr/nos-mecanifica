@@ -143,3 +143,42 @@ já existe. Depois execute novamente `revisar:modelagem` para produzir a primeir
 `r001` válida, leia suas quatro imagens e só então formule uma hipótese de
 iteração. A capacidade de grupo linear nomeado deve ser tratada separadamente;
 não usar índices de furo, IDs de face ou JavaScript auxiliar como atalho.
+
+## Retomada corretiva — gate de vistas naturalmente finas
+
+O recorte posterior foi autorizado sem alterar `_placa-adaptadora.js`. A causa
+era a regra pura `enquadramentoUtil`: ela exigia dimensão longa de 32% **e**
+área de 3,5%. A frontal real da placa já ocupava `48,0% × 6,4%`, portanto tinha
+silhueta longa enquadrada e espessura mensurável, mas área de apenas 3,072%.
+
+A regra agora exige, além de não haver corte nem valor não finito, pelo menos
+32% na dimensão longa e 4% na curta. A decisão explícita é que projeção com
+lado zero ou quase degenerado não é uma vista de espessura e continua inválida;
+uma chapa fina não é render vazio. A regressão pura primeiro reproduziu a
+falha de `0,48 × 0,064` e depois passou junto de nove testes focados, cobrindo
+vista normal, objeto pequeno, corte, projeção quase degenerada, vazia e não
+finita.
+
+`npm run revisar:modelagem -- homologacao-placa --revisao=r001` foi repetido
+oficialmente, com a mesma assinatura de modelo da tentativa histórica, e
+promoveu `revisoes/r001/revisao.json` mais quatro PNGs. As quatro vistas têm
+`cortado: false` e `valida: true`: isométrica `48,0% × 43,3%`, frontal
+`48,0% × 6,4%`, direita `48,0% × 8,5%` e superior `46,5% × 62,0%`.
+
+Leitura humana das imagens promovidas:
+
+- **isométrica:** passagem central, seis furos circulares e fileira linear de
+  três permanecem legíveis, sem alterar a geometria original;
+- **frontal:** vista válida da espessura, mas não torna passagem ou furos
+  visíveis;
+- **direita:** vista válida da espessura, mas também não torna os furos
+  visíveis;
+- **superior:** passagem central, seis furos regularmente distribuídos e os
+  três lineares são distinguíveis.
+
+Assim, a cláusula do briefing que pede os furos distinguíveis nas **quatro**
+vistas é divergente/inadequada para uma chapa de 18 mm. O gate de enquadramento
+não mede visibilidade funcional de cada furo em toda projeção e não deve forçar
+uma câmera ou geometria artificial para isso. Permanecem pendentes, fora deste
+recorte: grupo linear nomeado como endereço único, abertura oblonga e a
+deduplicação da tentativa histórica.
