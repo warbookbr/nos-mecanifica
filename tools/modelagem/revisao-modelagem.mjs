@@ -158,9 +158,11 @@ function relacao(valor, partes, quem, campo) {
 
 function portaDaDescricao(valor, quem, campo) {
   objeto(valor, quem, campo);
-  /* A descrição traz `passo` para leitura humana; a revisão o descarta. */
+  /* A descrição traz `passo` para leitura humana; a revisão o descarta.
+     `interface`, ao contrário, é contrato geométrico público já resolvido
+     pelo descritor e precisa continuar disponível para a revisão. */
   for (const chave of Object.keys(valor)) {
-    if (!['id', 'rotulo', 'op', 'origemId', 'recorte', 'origem', 'passo'].includes(chave)) erro(quem, `'${campo}.${chave}' não é reconhecido.`);
+    if (!['id', 'rotulo', 'op', 'origemId', 'recorte', 'origem', 'passo', 'interface'].includes(chave)) erro(quem, `'${campo}.${chave}' não é reconhecido.`);
   }
   const porta = {
     id: texto(valor.id, quem, `${campo}.id`, { semantico: true }),
@@ -169,9 +171,49 @@ function portaDaDescricao(valor, quem, campo) {
     origemId: idDeOrigem(valor.origemId, quem, `${campo}.origemId`),
     recorte: typeof valor.recorte === 'string' ? valor.recorte : '',
     origem: texto(valor.origem, quem, `${campo}.origem`),
+    ...(valor.interface === undefined ? {} : { interface: interfaceDaDescricao(valor.interface, quem, `${campo}.interface`) }),
   };
   if (temIdentidadeProibida(porta)) erro(quem, `${campo} contém identidade proibida.`);
   return porta;
+}
+
+/* A revisão não resolve nem interpreta a interface: essa transformação já foi
+   feita pelo núcleo antes de a descrição ser publicada. Aqui validamos o
+   contrato serializável oficial e o copiamos integralmente para que a
+   assinatura e a comparação detectem mudanças de encaixe. */
+function interfaceDaDescricao(valor, quem, campo) {
+  objeto(valor, quem, campo);
+  const forma = texto(valor.forma, quem, `${campo}.forma`, { semantico: true });
+  const camposPorForma = {
+    cilindro: ['forma', 'papel', 'eixo', 'centro', 'raio', 'inicio', 'fim', 'referencia', 'mao'],
+    anel: ['forma', 'papel', 'eixo', 'centro', 'raioInterno', 'raioExterno', 'inicio', 'fim', 'parte', 'mao'],
+  };
+  const permitidas = camposPorForma[forma];
+  if (!permitidas) erro(quem, `'${campo}.forma' não é reconhecida.`);
+  chavesExatas(valor, permitidas, quem, campo);
+  const eixo = vetor(valor.eixo, quem, `${campo}.eixo`);
+  if (eixo.every((n) => n === 0)) erro(quem, `'${campo}.eixo' não pode ser nulo.`);
+  const centro = vetor(valor.centro, quem, `${campo}.centro`);
+  const inicio = numero(valor.inicio, quem, `${campo}.inicio`);
+  const fim = numero(valor.fim, quem, `${campo}.fim`);
+  if (!(fim > inicio)) erro(quem, `'${campo}' exige fim > inicio.`);
+  const extras = {
+    ...(valor.referencia === undefined ? {} : { referencia: vetor(valor.referencia, quem, `${campo}.referencia`) }),
+    ...(valor.mao === undefined ? {} : { mao: valor.mao }),
+  };
+  if (extras.mao !== undefined && extras.mao !== 'espelhada') erro(quem, `'${campo}.mao' só aceita 'espelhada'.`);
+  if (forma === 'cilindro') {
+    if (!['interna', 'externa'].includes(valor.papel)) erro(quem, `'${campo}.papel' precisa ser interna ou externa.`);
+    const raio = numero(valor.raio, quem, `${campo}.raio`);
+    if (!(raio > 0)) erro(quem, `'${campo}.raio' precisa ser > 0.`);
+    return { forma, papel: valor.papel, eixo, centro, raio, inicio, fim, ...extras };
+  }
+  if (!['recebe', 'ocupa'].includes(valor.papel)) erro(quem, `'${campo}.papel' precisa ser recebe ou ocupa.`);
+  const raioInterno = numero(valor.raioInterno, quem, `${campo}.raioInterno`);
+  const raioExterno = numero(valor.raioExterno, quem, `${campo}.raioExterno`);
+  if (raioInterno < 0 || !(raioExterno > raioInterno)) erro(quem, `'${campo}' exige 0 <= raioInterno < raioExterno.`);
+  const parte = valor.parte === undefined ? {} : { parte: texto(valor.parte, quem, `${campo}.parte`, { semantico: true }) };
+  return { forma, papel: valor.papel, eixo, centro, raioInterno, raioExterno, inicio, fim, ...parte, ...extras };
 }
 
 /* O formato de revisão até v2 chamava a chave da porta de `nome` e reutilizava
@@ -446,9 +488,10 @@ function modeloPersistido(valor, quem, versao) {
   }
   descricao.aparencia = valor.aparencia;
   /* A entrada persistida não aceita `passo`; ela é reidratada só para reutilizar
-     a projeção da descrição e a validação detalhada. */
+     a projeção da descrição e a validação detalhada. `interface` é a exceção:
+     trata-se do contrato público já resolvido e deve sobreviver ao ciclo. */
   for (const porta of descricao.portas) {
-    chavesExatas(porta, ['id', 'rotulo', 'op', 'origemId', 'recorte', 'origem'], quem, 'modelo.portas[]');
+    chavesExatas(porta, ['id', 'rotulo', 'op', 'origemId', 'recorte', 'origem', 'interface'], quem, 'modelo.portas[]');
   }
   return modeloDaDescricao(descricao);
 }

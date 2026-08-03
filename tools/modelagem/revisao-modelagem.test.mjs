@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 import { nucleo } from '../../prototipos/fps/v3/motor/oficina.js';
 import * as jardineira from '../../prototipos/fps/v3/pecas/_jardineira.js';
+import * as mancal from '../../prototipos/fps/v3/pecas/_mancal-de-mesa.js';
 import { descreverPeca } from '../../src/autoria/descrever-partes.js';
 import {
   FORMATO_CRITICA,
@@ -99,6 +100,33 @@ describe('revisão assistida por IA', () => {
       id: 'assentoDoBotao', rotulo: 'assentoDoBotao', op: 'cone', origemId: 405, origem: 'cone:405 tampa=fundo',
     }));
     expect(jsonCanonico(resultado)).not.toContain('"passo"');
+  });
+
+  it('preserva a interface publicada pelo descritor oficial e a inclui na assinatura', () => {
+    const neutro = nucleo(
+      mancal.PASSOS, mancal.PARAMS ?? {}, mancal.TOPO ?? {},
+      mancal.MATERIAIS ?? {}, mancal.ESQUELETO ?? null, mancal.ALIASES ?? [],
+    );
+    const descrita = descreverPeca(neutro);
+    const anterior = construirRevisao({ peca: '_mancal-de-mesa', descricao: descrita, vistas: vistas() });
+    const esperadas = descrita.portas.map(({ passo, ...porta }) => porta);
+    expect(anterior.modelo.portas).toEqual(esperadas);
+    expect(validarRevisao(JSON.parse(jsonCanonico(anterior))).modelo.portas).toEqual(esperadas);
+    expect(jsonCanonico(anterior)).not.toContain('"passo"');
+
+    const alterada = structuredClone(descrita);
+    alterada.portas.find((porta) => porta.id === 'superficieDoEixo').interface.raio += 0.01;
+    const atual = construirRevisao({ peca: '_mancal-de-mesa', descricao: alterada, vistas: vistas() });
+    const critica = { formato: FORMATO_CRITICA, versao: VERSAO, peca: '_mancal-de-mesa', assinaturaModelo: anterior.assinaturaModelo, itens: [] };
+    const diff = compararRevisoes(anterior, atual, critica);
+    expect(anterior.assinaturaModelo).not.toBe(atual.assinaturaModelo);
+    expect(diff.portas.alteradas).toHaveLength(1);
+    expect(diff.portas.alteradas[0].chave).toBe('superficieDoEixo');
+    expect(diff.criticaAnterior.obsoleta).toBe(true);
+
+    const invalida = structuredClone(descrita);
+    invalida.portas[0].interface.uuid = '550e8400-e29b-41d4-a716-446655440000';
+    expect(() => construirRevisao({ peca: '_mancal-de-mesa', descricao: invalida, vistas: vistas() })).toThrow(/não é permitido/);
   });
 
   it('assina aparência neutra: mudar só cor ou aspereza aparece no diff', () => {
