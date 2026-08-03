@@ -15,6 +15,8 @@ const MEDIDAS = {
   peProfundidade: 0.080,
   fixacaoEsquerdaX: -0.060,
   fixacaoDireitaX: 0.060,
+  fixacaoEsquerdaZ: -0.025,
+  fixacaoDireitaZ: 0.025,
   fixacaoRaio: 0.006,
 
   centroBuchaY: 0.055,
@@ -105,9 +107,11 @@ export const PASSOS = [
     origemId: FUROS_DE_FIXACAO,
     de: { ...ORIGEM_PE, face: 'topo' },
     saida: { ...ORIGEM_PE, face: 'fundo' },
+    /* Furos em diagonal simétrica: a vista superior os separa do eixo e do
+       pedestal, sem alterar o envelope nem a posição dos demais volumes. */
     centros: [
-      ['fixacaoEsquerdaX', 'peTopoY', 0],
-      ['fixacaoDireitaX', 'peTopoY', 0],
+      ['fixacaoEsquerdaX', 'peTopoY', 'fixacaoEsquerdaZ'],
+      ['fixacaoDireitaX', 'peTopoY', 'fixacaoDireitaZ'],
     ],
     raio: 'fixacaoRaio',
     lados: 'ladosDosFuros',

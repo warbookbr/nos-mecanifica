@@ -198,10 +198,23 @@ A repetição, na mesma fonte, produziu a primeira
 `homologacao-mancal/revisoes/r001/`: quatro vistas válidas, assinatura
 `sha256:0cf82cea15b67b58c5a249e1ebd100e0dc551cb3bd885f8ef2553cc4df4b773b`,
 3 partes, 432 faces, 480 vértices e as duas interfaces preservadas. A inspeção
-reproduzível de `bucha` + `eixo` continua válida na vista frontal. As quatro
-imagens foram lidas; a oclusão dos furos na vista superior permanece uma
-divergência do modelo, deliberadamente sem `r002` neste recorte. A costura
-topológica do `lathe` também permanece registrada, sem alteração geométrica.
+reproduzível de `bucha` + `eixo` continua válida na vista frontal.
+
+A primeira iteração visual deslocou somente os dois centros de fixação para
+`Z = -0,025 m` e `Z = +0,025 m`, em simetria central. A `r001` permaneceu
+byte-idêntica e a `r002` foi promovida pelo comando oficial, novamente com
+quatro vistas válidas. A vista superior passou a mostrar os dois furos fora da
+projeção do pedestal; isométrica, frontal e direita mantiveram a leitura de
+base, bucha e eixo. Faces, vértices, partes, envelope, materiais, portas e
+interfaces ficaram iguais.
+
+O comparador de revisões reporta `modeloMudou: false`: a descrição estrutural
+atual registra caixa, contagens, partes, relações, aparência e portas, mas não
+os centros internos dos furos. O gabarito geométrico, que serializa a malha,
+registrou a mudança intencional de hash com as mesmas 480 vértices e 432 faces.
+Portanto a evidência visual e o gabarito comprovam a iteração; o diff de
+revisão confirma que não houve regressão nos campos que ele cobre. A costura
+topológica do `lathe` permanece registrada, sem alteração geométrica.
 As verificações completas passaram: 46 arquivos e 1.023 testes, typecheck,
 build, guards de portas e câmera, mapa, documentação, planos, gabarito, IDs
 crus e exportação.

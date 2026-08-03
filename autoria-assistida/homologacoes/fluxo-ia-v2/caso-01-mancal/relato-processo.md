@@ -370,3 +370,40 @@ atômica, não uma nova rodada de modelagem nem bloqueio do Caso 1.
 
 A costura topológica dos anéis de `lathe` permanece apenas como descoberta
 separada. Não foi corrigida nem reclassificada nesta repetição.
+
+## Iteração visual 1 — r002, furos de fixação
+
+Hipótese executada: mover os centros de fixação de `Z=0` para `Z=-0,025 m` e
+`Z=+0,025 m`, emparelhados com `X=-0,060 m` e `X=+0,060 m`, deve separar os
+furos da projeção do eixo e do pedestal na vista superior. A margem até a
+borda em profundidade continua 9 mm; raio, envelope, partes, materiais,
+interfaces e orçamento não mudam.
+
+A única edição da fonte nesta rodada foi essa posição. A `r001` foi conferida
+antes e depois, sem alteração de conteúdo (SHA-256 do arquivo:
+`1a984b422a404ae22c86f0f10986b4ce38c1dc144b935af29dd47424d4445f30`).
+`npm run revisar:modelagem -- homologacao-mancal --revisao=r002` promoveu as
+quatro imagens e `revisao.json` pelo fluxo oficial.
+
+Leitura da `r002`:
+
+- **isométrica:** os dois furos continuam legíveis e estão em cantos opostos
+  do pé; bucha e eixo mantêm a leitura anterior;
+- **frontal:** nenhuma mudança visual relevante, como esperado para um
+  deslocamento em profundidade;
+- **direita:** bucha oca e eixo seguem concêntricos;
+- **superior:** os dois furos aparecem separados, um em cada lado diagonal do
+  pé, sem oclusão pelo pedestal. O critério `furos-de-fixacao` está atendido.
+
+`npm run comparar:revisao -- r001/revisao.json r002/revisao.json` informou
+`modeloMudou: false`, sem diferença em caixa, contagens, partes, relações,
+aparência ou portas. Isso é a expectativa do contrato atual: ele não descreve
+centros de furos internos. Não é regressão desses campos, mas limita o diff
+estrutural como prova desta alteração; os PNGs e o gabarito da malha são a
+evidência complementar. O gabarito mudou somente para `_mancal-de-mesa`, de
+hash `9732ca…407d5c` para `f65271…e7108a`, preservando 480 vértices e 432
+faces. `id-cru`, validação estrita, validação do pacote, gabarito atualizado e
+inspeção reproduzível de `bucha,eixo` passaram.
+
+Não foi criada `r003`, não houve nova leitura de onboarding e não foi tocada a
+costura dos anéis de `lathe`. Casos 2 e 3 continuam sem início.
