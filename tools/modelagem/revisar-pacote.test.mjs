@@ -4,7 +4,7 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { prepararPacote } from './preparar-pacote.mjs';
 import { revisarPacote } from './revisar-pacote.mjs';
 import { serializarCanonico } from './formato-pacote.mjs';
@@ -38,6 +38,21 @@ async function definirOrcamentoExato(raiz, id) {
 }
 
 describe('revisar:modelagem', () => {
+  it('o caminho reutilizável não encaminha stdout comum da bancada', async () => {
+    const raiz = mkdtempSync(join(tmpdir(), 'mecanifica-revisao-'));
+    const escrever = vi.spyOn(process.stdout, 'write');
+    try {
+      await prepararPacote({ id: 'prova-silenciosa', peca: '_jardineira', raizPacotes: raiz });
+      await revisarPacote({
+        id: 'prova-silenciosa', revisao: 'r001', raizPacotes: raiz, executarBancada: bancadaFalsa,
+      });
+      expect(escrever).not.toHaveBeenCalled();
+    } finally {
+      escrever.mockRestore();
+      rmSync(raiz, { recursive: true, force: true });
+    }
+  });
+
   it('une a régua e as quatro vistas sem persistir runtime, host ou caminho local', async () => {
     const raiz = mkdtempSync(join(tmpdir(), 'mecanifica-revisao-'));
     try {

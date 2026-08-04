@@ -10,7 +10,6 @@
  */
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
-import { spawnSync } from 'node:child_process';
 import {
   ErroDePacote, RAIZ_PACOTES, RAIZ_REPOSITORIO, caminhoPacote,
 } from './formato-pacote.mjs';
@@ -18,10 +17,10 @@ import { validarPacoteNoDisco } from './validar-pacote.mjs';
 import {
   assinaturaModeloDaDescricao, construirRevisao, jsonCanonico, validarRevisao,
 } from './revisao-modelagem.mjs';
+import { olharBancada } from '../mecanifica/olhar-bancada.mjs';
 
 const VISTAS = ['isometrica', 'frontal', 'direita', 'superior'];
 const REVISAO = /^r[0-9]+$/;
-const OLHAR_BANCADA = join(RAIZ_REPOSITORIO, 'tools/mecanifica/olhar-bancada.mjs');
 
 function falhar(mensagem) {
   throw new ErroDePacote(mensagem);
@@ -53,41 +52,22 @@ function lerRelatorio(arquivo, peca) {
   };
 }
 
-function executarBancadaPadrao({ peca, vistas, relatorio }) {
-  const relativo = (caminho) => relative(RAIZ_REPOSITORIO, caminho).replaceAll('\\', '/');
-  const resultado = spawnSync(process.execPath, [
-    OLHAR_BANCADA,
+async function executarBancadaPadrao({ peca, vistas, relatorio, logger }) {
+  const resultado = await olharBancada({
     peca,
-    '--revisar',
-    `--saida=${relativo(vistas)}`,
-    `--relatorio=${relativo(relatorio)}`,
-  ], {
-    cwd: RAIZ_REPOSITORIO,
-    encoding: 'utf8',
-    timeout: 90_000,
+    revisar: true,
+    saida: relative(RAIZ_REPOSITORIO, vistas).replaceAll('\\', '/'),
+    relatorio: relative(RAIZ_REPOSITORIO, relatorio).replaceAll('\\', '/'),
+    logger,
   });
-  if (resultado.stdout) process.stdout.write(resultado.stdout);
-  if (resultado.stderr) process.stderr.write(resultado.stderr);
-  if (resultado.error) {
+  if (!resultado.ok) {
     return {
       aceita: false,
       falha: {
-        categoria: 'ferramenta',
-        codigo: resultado.error.code === 'ETIMEDOUT' ? 'bancada_timeout' : 'bancada_nao_executou',
+        categoria: resultado.erro?.categoria === 'uso' ? 'ferramenta' : 'ferramenta',
+        codigo: resultado.erro?.codigo === 'uso_invalido' ? 'bancada_nao_executou' : 'bancada_recusou',
         vista: null,
-        mensagem: resultado.error.code === 'ETIMEDOUT'
-          ? 'A captura da bancada excedeu o limite de execução.'
-          : 'O processo da bancada não pôde ser executado.',
-        acao: 'Repita depois de corrigir a ferramenta; não remodele a peça.',
-      },
-    };
-  }
-  if (resultado.status !== 0) {
-    return {
-      aceita: false,
-      falha: {
-        categoria: 'ferramenta', codigo: 'bancada_recusou', vista: null,
-        mensagem: 'A bancada encerrou a captura sem aceitar a revisão.',
+        mensagem: resultado.erro?.mensagem ?? 'A bancada encerrou a captura sem aceitar a revisão.',
         acao: 'Leia o relatório preservado para distinguir câmera, modelo e ferramenta.',
       },
     };
@@ -220,6 +200,7 @@ export async function revisarPacote({
   revisao,
   raizPacotes = RAIZ_PACOTES,
   executarBancada = executarBancadaPadrao,
+  logger = null,
 } = {}) {
   const nomeRevisao = revisarId(revisao);
   const validado = await validarPacoteNoDisco(id, { raizPacotes });
@@ -241,7 +222,7 @@ export async function revisarPacote({
   let execucao = null;
   let relatorioLido = null;
   try {
-    execucao = await executarBancada({ peca: validado.alvo.peca, vistas, relatorio: relato });
+    execucao = await executarBancada({ peca: validado.alvo.peca, vistas, relatorio: relato, logger });
     if (!existsSync(relato)) {
       falhar('a bancada não produziu relatório; a falha é da ferramenta, não evidência para remodelar a peça.');
     }
@@ -315,7 +296,11 @@ function argumentos(argv) {
 if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
   try {
     const { id, revisao } = argumentos(process.argv.slice(2));
-    const resultado = await revisarPacote({ id, revisao });
+    const resultado = await revisarPacote({
+      id,
+      revisao,
+      logger: (canal, mensagem) => process[canal].write(`${mensagem}\n`),
+    });
     console.log(`revisão criada: ${relative(RAIZ_REPOSITORIO, resultado.destino).replaceAll('\\', '/')}`);
   } catch (erro) {
     console.error(`revisar:modelagem: ${erro.message}`);
