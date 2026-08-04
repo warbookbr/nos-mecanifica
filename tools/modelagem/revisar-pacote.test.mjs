@@ -1,6 +1,6 @@
 // Prova a orquestração atômica entre pacote, descrição headless e vistas da bancada.
 import {
-  existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync,
+  existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { EventEmitter } from 'node:events';
 import { spawn } from 'node:child_process';
@@ -155,7 +155,9 @@ describe('revisar:modelagem', () => {
 
   it('interrompe o processo real quando o prazo injetável expira', async () => {
     let pid;
-    const pasta = mkdtempSync(join(process.cwd(), 'tools/bancadas/out', '.mecanifica-subprocesso-'));
+    const saida = join(process.cwd(), 'tools/bancadas/out');
+    mkdirSync(saida, { recursive: true });
+    const pasta = mkdtempSync(join(saida, '.mecanifica-subprocesso-'));
     const resultado = await executarBancadaPadrao({
       peca: '_jardineira', vistas: pasta, relatorio: join(pasta, 'relatorio.json'), timeoutMs: 30,
       spawnProcess: (_arquivo, _argumentos, opcoes) => {
