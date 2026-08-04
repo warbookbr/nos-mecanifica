@@ -59,6 +59,34 @@ describe('fatia preparatória do Degrau 1', () => {
     expect(logs).toEqual([]);
   });
 
+  it('fecha Vite mesmo quando browser.close falha e preserva o erro principal', async () => {
+    let viteFechado = false;
+    const servidor = {
+      httpServer: { address: () => ({ port: 43123 }) },
+      async listen() {},
+      async close() { viteFechado = true; },
+    };
+    const resultado = await olharBancada({
+      peca: 'freio-disco', vistas: ['isometrica'],
+      dependencias: {
+        createServer: async () => servidor,
+        carregarPlaywright: async () => ({ chromium: { launch: async () => ({
+          async newPage() { throw new Error('falha principal de página'); },
+          async close() { throw new Error('falha secundária de fechamento'); },
+        }) } }),
+      },
+    });
+    expect(viteFechado).toBe(true);
+    expect(resultado).toMatchObject({
+      ok: false,
+      erro: {
+        codigo: 'falha_bancada',
+        mensagem: 'falha principal de página',
+        limpeza: [{ recurso: 'browser', codigo: 'falha_fechamento' }],
+      },
+    });
+  });
+
   it('não grava saída durante importação e não depende de arquivos de teste', () => {
     const pasta = mkdtempSync(join(tmpdir(), 'mecanifica-mcp-import-'));
     try {

@@ -86,6 +86,19 @@ function erroEstruturado({ relato, erro, resultado = null }) {
   };
 }
 
+async function fecharRecursos({ browser, vite }) {
+  const limpeza = [];
+  for (const [recurso, instancia] of [['browser', browser], ['vite', vite]]) {
+    if (!instancia) continue;
+    try {
+      await instancia.close();
+    } catch (erro) {
+      limpeza.push({ recurso, codigo: 'falha_fechamento', mensagem: erro?.message ?? String(erro) });
+    }
+  }
+  return limpeza;
+}
+
 function urlPublicadaDa(url) {
   return `https://warbookbr.github.io/nos-mecanifica/bancada.html${new URL(url).search}`;
 }
@@ -117,6 +130,7 @@ export async function olharBancada({
   const falhasRelatadas = [];
   let vite = null;
   let browser = null;
+  let resposta = null;
   try {
     if (revisar && vistasDeclaradas !== null) erroDeUso('--revisar já define as vistas; não misture com --vistas');
     if (parPedida !== null && revisar) erroDeUso('--par é inspeção dirigida; não misture com --revisar.');
@@ -336,16 +350,26 @@ export async function olharBancada({
       }
     }
     const resultado = { peca: pecaRelatada, falhas: falhasRelatadas, vistas: vistasRelatadas, arquivos: arquivosPlanejados };
-    return {
+    resposta = {
       ok: !falhou, codigo: falhou ? 1 : 0, erro: falhou ? { categoria: 'bancada', codigo: 'bancada_recusou', mensagem: 'A bancada encerrou a captura sem aceitar a revisão.' } : null,
       stdout: relato.stdout.join(''), stderr: relato.stderr.join(''), resultado,
     };
   } catch (erro) {
-    return erroEstruturado({ relato, erro, resultado: { falhas: falhasRelatadas } });
+    resposta = erroEstruturado({ relato, erro, resultado: { falhas: falhasRelatadas } });
   } finally {
-    if (browser) await browser.close();
-    if (vite) await vite.close();
+    const limpeza = await fecharRecursos({ browser, vite });
+    if (limpeza.length) {
+      resposta ??= erroEstruturado({ relato, erro: new Error('A bancada falhou ao fechar seus recursos.') });
+      resposta.ok = false;
+      resposta.codigo = 1;
+      resposta.limpeza = limpeza;
+      resposta.erro ??= {
+        categoria: 'execucao', codigo: 'falha_limpeza', mensagem: 'A bancada falhou ao fechar seus recursos.',
+      };
+      resposta.erro.limpeza = limpeza;
+    }
   }
+  return resposta;
 }
 
 function comoCLI(argv) {
