@@ -6,8 +6,9 @@
 
 **Repositório e base:** `warbook`, `8ccfaf2f991437b297f2e3757e90b290c023a9ef`
 
-**Arquivos reservados nesta fatia:** `tools/mcp/`, `package.json`,
-`package-lock.json`, `.github/workflows/ci.yml` e este plano.
+**Arquivos reservados nesta fatia:** `tools/mcp/`,
+`tools/mecanifica/descrever-peca.mjs`, `package.json`, `package-lock.json`,
+`.github/workflows/ci.yml` e este plano.
 ## Problema observado
 
 O Caso 1 exigiu, antes da primeira fonte, 10 documentos, 3 guias, 6 exemplos e
@@ -168,12 +169,10 @@ navegador e servidor, e `git diff --check` permanece limpo.
 
 ## Métricas e evidências
 
-Medir documentos/recursos lidos, caracteres ou tokens carregados, chamadas
-malsucedidas, fallbacks para CLI/shell, tempo até o primeiro pacote ou revisão
-válida, quantidade e causa das iterações, tamanho do catálogo e dos schemas por
-perfil e percentual de erros estruturados acionáveis. Comparar cada execução
-com a linha-base do Caso 1 e registrar Caso 2, assinaturas, contagens, revisão,
-quatro vistas e divergências visuais permitidas.
+Linha-base registrada: `tools/list` 11.824 B; `resources/list` 362 B;
+`descrever_peca` 5.464 B; `validar_pacote` 320 B; `comparar_revisoes` 874 B.
+Comparar contexto, falhas, fallbacks, tempo, assinaturas, contagens, revisão,
+quatro vistas e divergências visuais permitidas contra os Casos 1 e 2.
 
 ## Paradas obrigatórias
 

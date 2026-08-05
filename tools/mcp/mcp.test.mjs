@@ -6,10 +6,13 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { Client, LATEST_PROTOCOL_VERSION } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
-import { descreverPecaReutilizavel } from '../mecanifica/descrever-peca.mjs';
+import { descreverPecaReutilizavel, PECAS_DISPONIVEIS } from '../mecanifica/descrever-peca.mjs';
 import { validarPacoteNoDisco } from '../modelagem/validar-pacote.mjs';
 import { compararRevisoes } from '../modelagem/revisao-modelagem.mjs';
-import { descrever, resumoComparacao, resumoDescricao, resumoTotais } from './perfis/revisao.mjs';
+import {
+  comparar, descrever, resumoComparacao, resumoDescricao, resumoTotais, validar,
+} from './perfis/revisao.mjs';
+import { compararSaida, descreverSaida, validarSaida } from './contratos.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const SERVIDOR = join(RAIZ, 'tools/mcp/servidor.mjs');
@@ -178,6 +181,15 @@ describe('servidor MCP local — perfil revisao', () => {
     }
   }, 20_000);
 
+  it('prova o contrato de descrição em todo o acervo sem abrir outro servidor', async () => {
+    for (const peca of PECAS_DISPONIVEIS) {
+      const resposta = await descrever({ peca });
+      descreverSaida.parse(resposta);
+      expect(resposta.erro?.codigo).not.toBe('falha_interna');
+    }
+    expect(PECAS_DISPONIVEIS).toHaveLength(37);
+  }, 120_000);
+
   it('valida pacote existente pelo serviço real e lê somente o resumo', async () => {
     const esperado = await validarPacoteNoDisco('homologacao-mancal');
     const { cliente } = await conectado();
@@ -200,6 +212,12 @@ describe('servidor MCP local — perfil revisao', () => {
     }
   });
 
+  it('prova os pacotes oficiais dos Casos 1 e 2 com o schema público', async () => {
+    for (const id of ['homologacao-mancal', 'homologacao-placa']) {
+      validarSaida.parse(await validar({ id }));
+    }
+  });
+
   it('compara revisões oficiais reais pelo comparador existente', async () => {
     const pacote = 'prova-caixote';
     const anterior = JSON.parse(readFileSync(join(RAIZ, 'autoria-assistida/pacotes', pacote, 'revisoes/r001/revisao.json')));
@@ -217,6 +235,15 @@ describe('servidor MCP local — perfil revisao', () => {
       tamanhosStructured.comparar_revisoes = Buffer.byteLength(JSON.stringify(resposta.result.structuredContent), 'utf8');
     } finally {
       await cliente.fechar();
+    }
+  });
+
+  it('prova os pares oficiais homologados com o schema público', () => {
+    for (const [id, anterior, posterior] of [
+      ['homologacao-mancal', 'r001', 'r002'],
+      ['prova-caixote', 'r001', 'r002'],
+    ]) {
+      compararSaida.parse(comparar({ id, anterior, posterior }));
     }
   });
 
