@@ -1,0 +1,52 @@
+name: Aplicar documentação MCP uma vez
+
+on:
+  push:
+    branches:
+      - agent/mcp-fatia-1b-docs
+
+permissions:
+  contents: write
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout da branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/mcp-fatia-1b-docs
+          fetch-depth: 0
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Dependências
+        run: npm ci
+
+      - name: Aplicar reorganização documental
+        run: python .github/mcp-docs/apply-docs.py . --no-gates
+
+      - name: Remover aplicador temporário
+        run: rm -rf .github/mcp-docs .github/workflows/apply-mcp-docs-once.yml
+
+      - name: Atualizar índices e validar documentação
+        run: |
+          npm run mapa
+          npm run docs:toc
+          npm run mapa:check
+          npm run docs:toc:check
+          npm run docs:links:check
+          npm run planos:check
+          git diff --check
+
+      - name: Publicar resultado final na branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Organiza programa MCP e abre Fatia 1B"
+          git push origin HEAD:${GITHUB_REF_NAME}
