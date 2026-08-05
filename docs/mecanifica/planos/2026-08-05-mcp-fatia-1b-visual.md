@@ -4,13 +4,13 @@
 
 **Responsável:** a definir
 
-**Repositório e base:** `warbookbr/nos-mecanifica`; registrar o `HEAD` ao iniciar a implementação
+**Repositório e base:** `warbookbr/nos-mecanifica`, `5e1d402acb7951fd78091122d3d38d4cb22061db`
 
 **Programa:** `docs/mecanifica/planos/mcp/INDEX.md`
 
 **Arquivos reservados:** `tools/mecanifica/olhar-bancada.mjs`,
 `tools/mcp/contratos.mjs`, `tools/mcp/perfis/revisao.mjs`,
-`tools/mcp/servidor.mjs`, `tools/mcp/mcp.test.mjs` e este plano.
+`tools/mcp/servidor.mjs`, `tools/mcp/mcp.test.mjs`, `.github/workflows/ci.yml` e este plano.
 
 ## Problema observado
 
