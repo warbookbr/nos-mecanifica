@@ -32,6 +32,9 @@ jobs:
       - name: Dependências
         run: npm ci
 
+      - name: Ajustar aplicador ao inventário atual
+        run: python .github/mcp-docs/corrigir-aplicador.py
+
       - name: Aplicar reorganização documental
         run: python .github/mcp-docs/apply-docs.py . --no-gates
 
