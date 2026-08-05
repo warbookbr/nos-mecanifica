@@ -3,12 +3,13 @@
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
+import { z } from 'zod';
 import { ferramentasRevisao } from './perfis/revisao.mjs';
 import {
   PERFIL, TRANSPORTE, VERSAO_CONTRATO_MCP,
 } from './contratos.mjs';
 
-const IDENTIDADE = Object.freeze({ nome: 'mecanifica-mcp', versao: '0.1.0' });
+const IDENTIDADE = Object.freeze({ name: 'mecanifica-mcp', version: '0.1.0' });
 
 const estado = Object.freeze({
   contrato: VERSAO_CONTRATO_MCP,
@@ -49,6 +50,23 @@ function textoDaResposta(nome, resposta) {
   return `${nome}: ${resposta.erro?.mensagem ?? 'operação recusada.'}`;
 }
 
+function respostaFalhaInterna(nome, erro) {
+  process.stderr.write(`mecanifica-mcp: ${nome}: falha interna (${erro?.name ?? 'Error'}).\n`);
+  return {
+    ok: false,
+    codigo: 1,
+    erro: {
+      codigo: erro instanceof z.ZodError ? 'entrada_recusada' : 'falha_interna',
+      mensagem: erro instanceof z.ZodError
+        ? 'A entrada não atende ao schema da ferramenta.'
+        : 'A ferramenta não conseguiu concluir a operação.',
+      acao: erro instanceof z.ZodError
+        ? 'Corrija os campos conforme o schema anunciado em tools/list.'
+        : 'Tente novamente; não altere os argumentos com base neste erro.',
+    },
+  };
+}
+
 function registrarPerfil(server) {
   for (const ferramenta of ferramentasRevisao) {
     server.registerTool(
@@ -69,15 +87,7 @@ function registrarPerfil(server) {
             structuredContent: resposta,
           };
         } catch (erro) {
-          const resposta = {
-            ok: false,
-            codigo: 1,
-            erro: {
-              codigo: 'entrada_recusada',
-              mensagem: 'A entrada não atende ao contrato da ferramenta.',
-              acao: 'Corrija os campos conforme o schema anunciado em tools/list.',
-            },
-          };
+          const resposta = respostaFalhaInterna(ferramenta.nome, erro);
           return {
             isError: true,
             content: [{ type: 'text', text: textoDaResposta(ferramenta.nome, resposta) }],
