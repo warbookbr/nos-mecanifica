@@ -1,0 +1,67 @@
+name: Aplicar MCP Fatia 1B uma vez
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout da branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/mcp-fatia-1b-visual
+          fetch-depth: 0
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Dependências
+        run: npm ci
+
+      - name: Chromium para o consumidor visual
+        run: npx playwright install --with-deps chromium
+
+      - name: Aplicar Fatia 1B
+        run: python .github/mcp-1b/apply.py
+
+      - name: Remover infraestrutura temporária
+        run: rm -rf .github/mcp-1b .github/workflows/apply-mcp-1b-once.yml
+
+      - name: Atualizar índices gerados
+        run: |
+          npm run mapa
+          npm run docs:toc
+
+      - name: Testes focados e consumidor real
+        run: |
+          npm run typecheck
+          npm test
+          npm run mcp:check
+          MCP_VISUAL_REAL=1 npm run mcp:check | tee /tmp/mcp-visual.log
+          grep 'MCP_VISUAL_METRICAS' /tmp/mcp-visual.log
+
+      - name: Gates proporcionais ao risco
+        run: |
+          npm run build
+          npm run mapa:check
+          npm run docs:toc:check
+          npm run docs:links:check
+          npm run planos:check
+          git diff --check
+
+      - name: Publicar implementação na branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Implementa vistas oficiais no MCP"
+          git push origin HEAD:agent/mcp-fatia-1b-visual
