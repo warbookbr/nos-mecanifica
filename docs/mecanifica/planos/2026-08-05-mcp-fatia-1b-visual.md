@@ -1,6 +1,6 @@
 # MCP — Fatia 1B visual somente leitura
 
-**Estado:** ativo
+**Estado:** concluído
 
 **Responsável:** a definir
 
@@ -164,6 +164,23 @@ mudanças de câmera, geometria ou produto cliente.
 
 ## Encerramento
 
-Ao concluir ou cancelar, registrar métricas reais, resultados dos Casos 1 e 2,
-limites observados, gates, decisão do programa e candidatos devolvidos ao
-painel. Nenhuma etapa posterior abre automaticamente.
+**Resultado:** concluído e aprovado no PR `#16`; implementação base
+`a72efcc749ab36a46aec228cbd15bafc8ae3a145`.
+
+O consumidor zerado leu 2 recursos, fez 6 chamadas de ferramentas, concluiu os
+Casos 1 e 2, não usou fallback, não produziu escrita e não teve falha inesperada.
+
+| Caso | Duração ponta a ponta | PNGs decodificados | Resposta MCP |
+|---|---:|---:|---:|
+| mancal (`_mancal-de-mesa`) | 18.093 ms | 569.117 B | 760.489 B |
+| placa (`_placa-adaptadora`) | 15.547 ms | 414.046 B | 553.725 B |
+
+O maior PNG teve 188.507 B. Todos os valores ficaram abaixo de 2 MiB por imagem,
+8 MiB decodificados, 11 MiB serializados e 45 s. As quatro vistas oficiais
+vieram na ordem contratada, com hashes, dimensões e enquadramento. Testes
+injetados provaram payload, timeout, traversal e limpeza; CI, MCP, testes,
+typecheck, build, mapa, TOC, links, planos e `git diff --check` passaram.
+
+A hipótese foi confirmada: a leitura visual entrou no MCP sem duplicar navegação,
+persistir artefatos ou abrir autoria, materiais, Git ou HTTP. Nenhuma etapa
+posterior foi ativada; a decisão seguinte permanece separada no painel.

@@ -259,6 +259,15 @@ describe('servidor MCP local — perfil revisao', () => {
       expect(await descrever({ peca: '../segredo' })).toMatchObject({
         ok: false, erro: { codigo: 'entrada_recusada' },
       });
+      const visual = await cliente.enviar('tools/call', {
+        name: 'renderizar_vistas', arguments: { peca: '../segredo' },
+      });
+      expect(visual.result).toMatchObject({ isError: true });
+      expect(visual.result.structuredContent).toBeUndefined();
+      expect(visual.result.content[0].text).toMatch(/Input validation error/);
+      expect((await renderizar({ peca: '../segredo' })).resposta).toMatchObject({
+        ok: false, erro: { codigo: 'entrada_recusada' },
+      });
       const traversal = await cliente.enviar('tools/call', { name: 'validar_pacote', arguments: { id: '../segredo' } });
       expect(traversal.result).toMatchObject({ isError: true });
       expect(traversal.result.structuredContent).toBeUndefined();
@@ -349,6 +358,50 @@ describe('servidor MCP local — perfil revisao', () => {
     expect(resultado.resultado.capturas).toHaveLength(4);
     expect(resultado.resultado.capturas.map(({ nome }) => nome)).toEqual(['isometrica', 'frontal', 'direita', 'superior']);
     expect(fechamentos).toEqual({ browser: 1, vite: 1 });
+  });
+
+  it('fecha Browser e Vite quando o timeout é forçado', async () => {
+    const fechamentos = { browser: 0, vite: 0 };
+    let rejeitarEspera;
+    const espera = new Promise((_, reject) => { rejeitarEspera = reject; });
+    const page = {
+      on() {},
+      async goto() {},
+      async waitForFunction() {},
+      waitForTimeout() { return espera; },
+      async evaluate(fn) {
+        const fonte = String(fn);
+        if (fonte.includes('const b =')) return {
+          ready: true, erro: null, peca: '_jardineira', partes: ['corpo'],
+          selecaoIgnorada: [], diagnosticos: { facesSemParte: [] },
+          estatisticas: { facesNeutras: 12, triangulos: 12 }, estado: {},
+        };
+        throw new Error(`evaluate inesperado antes do timeout: ${fonte}`);
+      },
+    };
+    const browser = {
+      async newPage() { return page; },
+      async close() {
+        fechamentos.browser += 1;
+        rejeitarEspera?.(new Error('browser fechado'));
+      },
+    };
+    const vite = {
+      httpServer: { address: () => ({ port: 4173 }) },
+      async listen() {},
+      async close() { fechamentos.vite += 1; },
+    };
+    const resultado = await olharBancada({
+      peca: '_jardineira', revisar: true, capturarEmMemoria: true,
+      timeoutMs: 10, espera: 60_000,
+      dependencias: {
+        createServer: async () => vite,
+        carregarPlaywright: async () => ({ chromium: { launch: async () => browser } }),
+      },
+    });
+    expect(resultado).toMatchObject({ ok: false, erro: { codigo: 'tempo_esgotado' } });
+    expect(fechamentos.browser).toBeGreaterThanOrEqual(1);
+    expect(fechamentos.vite).toBeGreaterThanOrEqual(1);
   });
 
   it('estrutura manifesto e imagens sem repetir base64 no structuredContent', async () => {
