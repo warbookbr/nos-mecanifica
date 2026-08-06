@@ -6,7 +6,8 @@
 > implementação exige plano executivo próprio.
 
 A definição ampla de autoria está em [`AUTORIA-IA.md`](AUTORIA-IA.md). Este
-arquivo detalha somente a camada de composição.
+arquivo detalha somente a camada de composição necessária para a IA construir e
+manter sistemas complexos.
 
 ## Distinção de base
 
@@ -177,7 +178,8 @@ vizinhas.
 - isolamento visual não remove dependências;
 - alterações locais disparam descoberta e revalidação dos dependentes
   relevantes;
-- exportação separa autoria procedural do produto cliente.
+- representações resolvidas ou exportadas são derivadas da autoria e não a
+  substituem.
 
 ## Níveis de maturidade
 
@@ -194,8 +196,8 @@ vizinhas.
 | 8 | autoria transacional de sistemas compostos pela IA | não implementado |
 
 Os níveis 0 a 3 são operacionais. O nível 4 possui vocabulário e provas locais,
-mas ainda não existe como produto geral de montagem. Os níveis seguintes são a
-direção estabelecida, não promessa de implementação imediata.
+mas ainda não existe como capacidade geral de montagem. Os níveis seguintes são
+a direção estabelecida, não promessa de implementação imediata.
 
 ## O que não existe
 
