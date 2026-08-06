@@ -1,0 +1,86 @@
+name: Atualizar documentação do diagnóstico
+
+on:
+  push:
+    branches:
+      - docs/diagnostico-motor-procedural
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: docs/diagnostico-motor-procedural
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Atualizar entrada da Mecanifica
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const caminho = 'docs/mecanifica/INDEX.md';
+          let texto = fs.readFileSync(caminho, 'utf8');
+
+          function trocar(antes, depois) {
+            if (!texto.includes(antes)) {
+              throw new Error(`trecho esperado não encontrado: ${antes}`);
+            }
+            texto = texto.replace(antes, depois);
+          }
+
+          trocar(
+            '- Não há plano executivo ativo.',
+            '- O plano executivo ativo é o diagnóstico técnico do motor procedural.\n' +
+            '  A autorização está em\n' +
+            '  `docs/mecanifica/planos/2026-08-06-diagnostico-motor-procedural.md`;\n' +
+            '  o método detalhado está em\n' +
+            '  `docs/mecanifica/PROTOCOLO-DIAGNOSTICO-MOTOR.md`.',
+          );
+
+          trocar(
+            'Planejamento: [planos/README](planos/README.md), [programa MCP](planos/mcp/INDEX.md),',
+            'Planejamento: [planos/README](planos/README.md),\n' +
+            '[diagnóstico do motor](planos/2026-08-06-diagnostico-motor-procedural.md),\n' +
+            '[protocolo do diagnóstico](PROTOCOLO-DIAGNOSTICO-MOTOR.md),\n' +
+            '[programa MCP](planos/mcp/INDEX.md),',
+          );
+
+          trocar(
+            'docs/mecanifica/planos/README.md docs/mecanifica/planos/BACKLOG.md',
+            'docs/mecanifica/PROTOCOLO-DIAGNOSTICO-MOTOR.md docs/mecanifica/planos/README.md docs/mecanifica/planos/2026-08-06-diagnostico-motor-procedural.md docs/mecanifica/planos/BACKLOG.md',
+          );
+
+          fs.writeFileSync(caminho, texto);
+          NODE
+
+      - name: Regenerar mapa
+        run: npm run mapa
+
+      - name: Validar documentação
+        run: |
+          npm run mapa:check
+          npm run docs:toc:check
+          npm run docs:links:check
+          npm run planos:check
+          git diff --check
+
+      - name: Remover workflow temporário e publicar
+        run: |
+          rm .github/workflows/atualizar-docs-diagnostico.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m "docs: indexar diagnóstico ativo do motor"
+          git push origin HEAD:docs/diagnostico-motor-procedural
