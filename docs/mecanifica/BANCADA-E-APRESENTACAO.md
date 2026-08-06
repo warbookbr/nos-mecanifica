@@ -1,4 +1,4 @@
-# Bancada e inspeção da IA
+# Bancada e apresentação
 
 ## Papel atual
 
