@@ -1,7 +1,7 @@
 /* planejar-pacote.test.mjs — plano puro, sem escrita: determinismo da
    confirmação, recusas estruturadas e paridade de defaults com a CLI. */
 import {
-  existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync,
+  existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, symlinkSync, writeFileSync,
 } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -151,6 +151,52 @@ describe('planejarPacote — plano puro, sem escrita', () => {
         .rejects.toBeInstanceOf(ErroDePacote);
     } finally {
       rmSync(raiz, { recursive: true, force: true });
+    }
+  });
+
+  it('recusa planejar quando o destino é um symlink quebrado, sem emitir confirmação', async () => {
+    const raiz = raizTemporaria();
+    const fora = raizTemporaria();
+    try {
+      const alvoInexistente = join(fora, 'nao-existe-de-verdade');
+      symlinkSync(alvoInexistente, join(raiz, 'destino-symlink-quebrado'));
+      /* `existsSync` seguiria o link, veria que o alvo não existe, e diria
+         "não existe" — errado: há algo ali (o próprio link) que precisa ser
+         recusado, não ignorado. */
+      await expect(planejarPacote({ id: 'destino-symlink-quebrado', peca: '_jardineira', raizPacotes: raiz }))
+        .rejects.toMatchObject({ codigo: 'pacote_existente' });
+    } finally {
+      rmSync(raiz, { recursive: true, force: true });
+      rmSync(fora, { recursive: true, force: true });
+    }
+  });
+
+  it('recusa planejar quando a raiz de pacotes é link simbólico, sem emitir confirmação', async () => {
+    const fora = raizTemporaria();
+    const alvoReal = raizTemporaria();
+    try {
+      const raizSymlink = join(fora, 'raiz-symlink');
+      symlinkSync(alvoReal, raizSymlink, 'dir');
+      await expect(planejarPacote({ id: 'via-raiz-symlink-plano', peca: '_jardineira', raizPacotes: raizSymlink }))
+        .rejects.toMatchObject({ codigo: 'raiz_invalida' });
+    } finally {
+      rmSync(fora, { recursive: true, force: true });
+      rmSync(alvoReal, { recursive: true, force: true });
+    }
+  });
+
+  it('recusa planejar quando o pai da raiz de pacotes é link simbólico, sem emitir confirmação', async () => {
+    const fora = raizTemporaria();
+    const alvoReal = raizTemporaria();
+    try {
+      const paiSymlink = join(fora, 'pai-symlink');
+      symlinkSync(alvoReal, paiSymlink, 'dir');
+      const raizPacotes = join(paiSymlink, 'pacotes');
+      await expect(planejarPacote({ id: 'via-pai-symlink-plano', peca: '_jardineira', raizPacotes }))
+        .rejects.toMatchObject({ codigo: 'raiz_invalida' });
+    } finally {
+      rmSync(fora, { recursive: true, force: true });
+      rmSync(alvoReal, { recursive: true, force: true });
     }
   });
 });

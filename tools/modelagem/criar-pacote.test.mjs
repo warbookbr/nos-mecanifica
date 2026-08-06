@@ -195,15 +195,20 @@ describe('criarPacoteAtomico — aplicação atômica, confinada e sem sobrescri
     }
   });
 
-  it('recusa raiz de pacotes que é link simbólico', async () => {
+  it('recusa raiz de pacotes que é link simbólico (mesma pré-condição do plano, recalculada por dentro)', async () => {
     const fora = raizTemporaria();
     const alvoReal = raizTemporaria();
     try {
       const raizSymlink = join(fora, 'raiz-symlink');
       symlinkSync(alvoReal, raizSymlink, 'dir');
-      const plano = await planejarPacote({ id: 'via-raiz-symlink', peca: '_jardineira', raizPacotes: raizSymlink });
+      /* planejarPacote já recusa isso sozinho — criarPacoteAtomico herda a
+         mesma recusa por recalcular o plano internamente, então nem chega a
+         validar a confirmação (por isso um valor qualquer aqui já basta). */
+      await expect(planejarPacote({ id: 'via-raiz-symlink', peca: '_jardineira', raizPacotes: raizSymlink }))
+        .rejects.toMatchObject({ codigo: 'raiz_invalida' });
       await expect(criarPacoteAtomico({
-        id: 'via-raiz-symlink', peca: '_jardineira', confirmacao: plano.confirmacao, raizPacotes: raizSymlink,
+        id: 'via-raiz-symlink', peca: '_jardineira', confirmacao: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+        raizPacotes: raizSymlink,
       })).rejects.toMatchObject({ codigo: 'raiz_invalida' });
     } finally {
       rmSync(fora, { recursive: true, force: true });

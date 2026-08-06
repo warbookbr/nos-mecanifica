@@ -2,11 +2,11 @@
    pacote canônico. `preparar-pacote.mjs` (CLI) e o perfil MCP `autoria`
    (`planejar_pacote`/`criar_pacote`) chamam exatamente esta função, para que
    plano e aplicação nunca possam divergir em regra ou default. */
-import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { relative } from 'node:path';
 import {
-  ErroDePacote, RAIZ_PACOTES, RAIZ_REPOSITORIO, alvoExiste, caminhoPacote, descreverAlvo, serializarCanonico, validarPacote,
+  ErroDePacote, RAIZ_PACOTES, RAIZ_REPOSITORIO, alvoExiste, caminhoPacote, descreverAlvo,
+  precondicoesDeEscrita, serializarCanonico, validarPacote,
 } from './formato-pacote.mjs';
 
 export const VERSAO_CONTRATO_AUTORIA = 'mecanifica.mcp.autoria.v1';
@@ -36,9 +36,8 @@ export async function planejarPacote({
   raizPacotes = RAIZ_PACOTES, raizRepositorio = RAIZ_REPOSITORIO,
 } = {}) {
   const destinoAbsoluto = caminhoPacote(id, { raizPacotes });
-  if (existsSync(destinoAbsoluto)) {
-    falhar('pacote_existente', `pacote '${id}' já existe; preparar nunca sobrescreve.`);
-  }
+  const precondicao = precondicoesDeEscrita({ id, raizPacotes });
+  if (!precondicao.ok) falhar(precondicao.codigo, precondicao.mensagem);
   if (!['refinamento', 'criacao'].includes(modo)) {
     falhar('entrada_invalida', 'modo precisa ser refinamento ou criacao.');
   }

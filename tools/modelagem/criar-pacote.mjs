@@ -7,7 +7,7 @@ import { randomBytes } from 'node:crypto';
 import {
   lstatSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync,
 } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 import {
   ErroDePacote, RAIZ_PACOTES, RAIZ_REPOSITORIO, algoExisteEm, caminhoPacote,
 } from './formato-pacote.mjs';
@@ -35,26 +35,16 @@ export async function criarPacoteAtomico({
     falhar('confirmacao_ausente', 'confirmacao é obrigatória; obtenha uma com planejar_pacote.');
   }
 
-  /* A raiz de pacotes em si não pode ser um symlink: se estiver, todo o
-     confinamento abaixo confiaria numa raiz alheia sem saber. */
-  if (escrita.algoExisteEm(raizPacotes) && escrita.lstatSync(raizPacotes).isSymbolicLink()) {
-    falhar('raiz_invalida', 'a raiz de pacotes não pode ser um link simbólico.');
-  }
-  const paiDaRaiz = dirname(raizPacotes);
-  if (escrita.algoExisteEm(paiDaRaiz) && escrita.lstatSync(paiDaRaiz).isSymbolicLink()) {
-    falhar('raiz_invalida', 'o diretório pai da raiz de pacotes não pode ser um link simbólico.');
-  }
-
+  /* Recalcula o plano pelo mesmo serviço que planejar_pacote usa — inclusive
+     a mesma `precondicoesDeEscrita` (raiz/pai por symlink, destino já
+     ocupado). Não duplicamos essas checagens aqui: rodar exatamente a mesma
+     função é o que garante que dry-run e aplicação nunca divirjam. */
   const plano = await planejarPacote({ id, peca, modo, partesEsperadas, raizPacotes, raizRepositorio });
   if (plano.confirmacao !== confirmacao) {
     falhar('confirmacao_invalida', 'a confirmação não corresponde ao plano recalculado; peça um novo planejar_pacote.');
   }
 
   const destinoAbsoluto = caminhoPacote(id, { raizPacotes });
-  if (escrita.algoExisteEm(destinoAbsoluto)) {
-    falhar('pacote_existente', `pacote '${id}' já existe; criar nunca sobrescreve.`);
-  }
-
   escrita.mkdirSync(raizPacotes, { recursive: true });
   const temporaria = join(raizPacotes, `.tmp-${id}-${randomBytes(8).toString('hex')}`);
   /* `mkdirSync` sem `recursive` recusa qualquer coisa já existente nesse

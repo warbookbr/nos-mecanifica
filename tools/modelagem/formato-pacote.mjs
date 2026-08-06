@@ -388,6 +388,31 @@ export function algoExisteEm(caminho) {
   try { lstatSync(caminho); return true; } catch { return false; }
 }
 
+/**
+ * Pré-condição única de escrita, compartilhada por `planejarPacote` e
+ * `criarPacoteAtomico`: as duas fases precisam recusar exatamente as mesmas
+ * situações, senão o plano pode emitir uma confirmação válida para uma
+ * aplicação que necessariamente vai falhar (ex.: destino com symlink
+ * quebrado, ou raiz de pacotes/seu pai por symlink). Usa `algoExisteEm`
+ * (ciente de symlink) em vez de `existsSync`, que segue symlink e trata um
+ * link quebrado como "não existe". Fail-closed: devolve `{ok:false, codigo,
+ * mensagem}` em vez de lançar, para o chamador decidir a ação.
+ */
+export function precondicoesDeEscrita({ id, raizPacotes = RAIZ_PACOTES } = {}) {
+  if (algoExisteEm(raizPacotes) && lstatSync(raizPacotes).isSymbolicLink()) {
+    return { ok: false, codigo: 'raiz_invalida', mensagem: 'a raiz de pacotes não pode ser um link simbólico.' };
+  }
+  const paiDaRaiz = dirname(raizPacotes);
+  if (algoExisteEm(paiDaRaiz) && lstatSync(paiDaRaiz).isSymbolicLink()) {
+    return { ok: false, codigo: 'raiz_invalida', mensagem: 'o diretório pai da raiz de pacotes não pode ser um link simbólico.' };
+  }
+  const destino = caminhoPacote(id, { raizPacotes });
+  if (algoExisteEm(destino)) {
+    return { ok: false, codigo: 'pacote_existente', mensagem: `pacote '${id}' já existe; nunca sobrescreve.` };
+  }
+  return { ok: true };
+}
+
 /* Resolve `nome` (componente simples, sem separador) dentro de `pastaReal` —
    que já precisa ser um caminho real, sem symlinks — e devolve o caminho
    literal do resultado, ou `null` fail-closed. Duas checagens, nessa ordem:
