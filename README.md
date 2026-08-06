@@ -1,7 +1,8 @@
 # Mecanifica
 
-Repositório de autoria procedural, receitas determinísticas e bancada de
-inspeção para o simulador 3D Mecanifica.
+Repositório de autoria procedural para IA: núcleo geométrico, receitas
+determinísticas, bancada de inspeção e ferramentas de medição e validação para o
+simulador 3D Mecanifica.
 
 ## Portas
 
@@ -14,13 +15,38 @@ Este repositório publica somente `bancada.html`. A aplicação jogável, a Ofic
 humana, o som e suas pontes foram removidos. O produto carrega peças resolvidas;
 ele não executa o núcleo procedural.
 
+## Direção
+
+A unidade geométrica editável é a **peça**. A unidade de composição é a
+**montagem**. Montagens podem conter outras montagens e formar sistemas, carros
+completos e, depois que esse modelo estiver maduro, robôs.
+
+Carro e motor não devem ser receitas monolíticas. A IA deve conseguir trabalhar
+em um alvo reduzido, escolher quais componentes observar juntos, manter acesso
+às dependências e revalidar as montagens afetadas depois de uma alteração.
+
+O mapa de composição, relações e dependências deve ser dado estruturado do
+sistema, não apenas documentação manual. MCP, CLI e API são possíveis portas de
+acesso; nenhuma delas substitui o núcleo ou define o modelo de autoria.
+
+Leia [`docs/mecanifica/AUTORIA-IA.md`](docs/mecanifica/AUTORIA-IA.md) para a
+definição completa e
+[`docs/mecanifica/MONTAGENS-SEMANTICAS.md`](docs/mecanifica/MONTAGENS-SEMANTICAS.md)
+para a direção de composição.
+
 ## Estado
 
-Casos 1 e 2 estão homologados e as Fatias 1A e 1B do MCP foram aprovadas e
-encerradas. Não há plano ativo; o Caso 3 ainda não começou.
-O núcleo, as receitas, o visor compatível, a bancada e as ferramentas continuam
-ativos. O contrato genérico de materiais ainda não existe. O servidor estático
-local ainda falha ao resolver o import bare `earcut`.
+- Casos 1 e 2 estão homologados; o Caso 3 ainda não começou.
+- Não há plano executivo ativo.
+- O Módulo 1 do MCP, de leitura e auditoria, foi aprovado.
+- A primeira tentativa de autoria controlada foi encerrada com decisão
+  `interromper`; o PR #25 foi fechado sem merge.
+- O núcleo, as receitas, o visor compatível, a bancada e as ferramentas continuam
+  ativos.
+- Ainda não existem montagem recursiva persistida, mapa completo de dependências,
+  solver geral de encaixe ou camada completa de escrita para IA.
+- O contrato genérico de materiais ainda não existe.
+- O servidor estático local ainda falha ao resolver o import bare `earcut`.
 
 ## Desenvolvimento
 
