@@ -177,3 +177,102 @@ export function respostaErro(codigo, erroDetalhe) {
 export function erroAcionavel(codigo, mensagem, acao) {
   return { codigo, mensagem, acao };
 }
+
+/* ---------- perfil autoria (escrita confinada e atômica) ---------- */
+
+export const PERFIL_AUTORIA = 'autoria';
+
+const pecaSemantica = nomeParte;
+const idPacote = slug;
+const modoAutoria = z.enum(['refinamento', 'criacao']);
+const confirmacaoAutoria = z.string().regex(/^sha256:[a-f0-9]{64}$/);
+
+const alvoAutoria = z.object({
+  peca: pecaSemantica,
+  caminho: z.string(),
+  modo: modoAutoria,
+}).strict();
+const perfilPacoteAutoria = z.object({
+  visual: z.enum(['esquematico', 'lowpolyIntencional', 'tecnicoDidatico', 'realistaApresentacao']),
+  fidelidade: z.enum(['F0', 'F1', 'F2', 'F3']),
+  precisao: z.enum(['ilustrativa', 'dimensional', 'mecanica']),
+  interacao: z.enum(['contexto', 'selecao', 'montagem', 'animacao']),
+  distanciaMinima: z.number(),
+  orcamento: z.object({
+    faces: z.number().int(),
+    materiais: z.number().int().optional(),
+    partes: z.number().int().optional(),
+  }).strict(),
+  origem: z.enum(['declarado', 'suposicao-canonica']),
+}).strict();
+const checklistItemAutoria = z.object({
+  id: slug,
+  prioridade: z.number().int(),
+  estado: z.enum(['aberto', 'atendido', 'divergente', 'bloqueado_capacidade', 'adiado', 'obsoleto']),
+  criterio: z.string(),
+}).strict();
+const briefingAutoria = z.object({
+  formato: z.literal('mecanifica.pacote-modelagem'),
+  versao: z.literal(1),
+  id: idPacote,
+  alvo: alvoAutoria,
+  objetivo: z.string(),
+  perfil: perfilPacoteAutoria,
+  partesEsperadas: z.array(nomeParte),
+  guias: z.array(z.string()),
+  checklist: z.array(checklistItemAutoria),
+  provas: z.array(slug),
+}).strict();
+const referenciasAutoria = z.object({
+  formato: z.literal('mecanifica.referencias-modelagem'),
+  versao: z.literal(1),
+  ausenciaDeclarada: z.boolean(),
+  referencias: z.array(z.any()),
+}).strict();
+const arquivoPlanejado = z.object({
+  caminho: z.string(),
+  bytes: z.number().int().nonnegative(),
+  sha256: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+}).strict();
+
+export const planejarEntrada = z.object({
+  id: idPacote,
+  peca: pecaSemantica,
+  modo: modoAutoria,
+  partesEsperadas: z.array(nomeParte).optional(),
+}).strict();
+
+export const criarEntrada = z.object({
+  id: idPacote,
+  peca: pecaSemantica,
+  modo: modoAutoria,
+  partesEsperadas: z.array(nomeParte).optional(),
+  confirmacao: confirmacaoAutoria,
+}).strict();
+
+export const planejarSaida = z.object({
+  ...respostaBase,
+  resultado: z.object({
+    id: idPacote,
+    peca: pecaSemantica,
+    modo: modoAutoria,
+    partesEsperadas: z.array(nomeParte),
+    destino: z.string(),
+    arquivos: z.array(arquivoPlanejado).length(2),
+    briefing: briefingAutoria,
+    referencias: referenciasAutoria,
+    confirmacao: confirmacaoAutoria,
+  }).optional(),
+}).strict();
+
+export const criarSaida = z.object({
+  ...respostaBase,
+  resultado: z.object({
+    id: idPacote,
+    peca: pecaSemantica,
+    modo: modoAutoria,
+    partesEsperadas: z.array(nomeParte),
+    destino: z.string(),
+    arquivos: z.array(arquivoPlanejado).length(2),
+  }).optional(),
+}).strict();

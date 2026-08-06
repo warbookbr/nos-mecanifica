@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-/* preparar-pacote.mjs — cria só o esqueleto canônico; uma pasta já existente é
-   sempre erro. Assim, uma segunda tentativa nunca apaga briefing ou crítica. */
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import {
-  ErroDePacote, RAIZ_PACOTES, alvoExiste, caminhoPacote, descreverAlvo, serializarCanonico, validarPacote,
-} from './formato-pacote.mjs';
+/* preparar-pacote.mjs — CLI fina sobre o mesmo núcleo de `planejar-pacote.mjs`
+   e `criar-pacote.mjs`: plano, confirmação e aplicação atômica em um único
+   comando. Uma pasta já existente é sempre erro, então uma segunda tentativa
+   nunca apaga briefing ou crítica. */
+import { ErroDePacote, RAIZ_PACOTES, caminhoPacote } from './formato-pacote.mjs';
+import { criarPacoteAtomico } from './criar-pacote.mjs';
+import { planejarPacote } from './planejar-pacote.mjs';
 
 function uso(mensagem) {
   console.error(`preparar:modelagem: ${mensagem}`);
@@ -48,67 +48,15 @@ function ler(argv) {
 export async function prepararPacote({
   id, peca, modo = 'refinamento', partesEsperadas = null, raizPacotes = RAIZ_PACOTES,
 } = {}) {
-  const destino = caminhoPacote(id, { raizPacotes });
-  if (existsSync(destino)) throw new ErroDePacote(`pacote '${id}' já existe; preparar nunca sobrescreve.`);
-  if (!['refinamento', 'criacao'].includes(modo)) {
-    throw new ErroDePacote('modo precisa ser refinamento ou criacao.');
-  }
-  if (modo === 'refinamento' && partesEsperadas !== null) {
-    throw new ErroDePacote('partesEsperadas só pode ser declarada no modo criacao; refinamento confere a descrição atual.');
-  }
-  if (modo === 'criacao' && (!Array.isArray(partesEsperadas) || !partesEsperadas.length)) {
-    throw new ErroDePacote('modo criacao exige partesEsperadas semânticas e não vazias.');
-  }
-  if (modo === 'criacao' && alvoExiste(peca)) {
-    throw new ErroDePacote(`alvo '${peca}' já existe; use modo refinamento para não mascarar partes existentes.`);
-  }
-  const alvo = modo === 'refinamento' ? await descreverAlvo(peca) : { peca, partes: partesEsperadas };
-  const briefing = {
-    formato: 'mecanifica.pacote-modelagem',
-    versao: 1,
-    id,
-    alvo: { peca: alvo.peca, caminho: `prototipos/fps/v3/pecas/${alvo.peca}.js`, modo },
-    objetivo: modo === 'criacao'
-      ? `Criar a peça '${alvo.peca}' por evidência observável.`
-      : `Revisar e refinar a peça '${alvo.peca}' por evidência observável.`,
-    perfil: {
-      visual: 'tecnicoDidatico',
-      fidelidade: 'F2',
-      precisao: 'mecanica',
-      interacao: 'montagem',
-      distanciaMinima: 0.5,
-      orcamento: { faces: 2000 },
-      /* Sem informação do pedido, PERFIS-DE-AUTORIA manda assumir este modo;
-         a origem é determinística e não guarda data nem máquina. */
-      origem: 'suposicao-canonica',
-    },
-    partesEsperadas: alvo.partes,
-    guias: [
-      'forma/silhueta-e-transicoes',
-      'material/leitura-de-material',
-      'processo/evidencia-e-iteracao',
-    ],
-    checklist: [
-      { id: 'silhueta', prioridade: 1, estado: 'aberto', criterio: 'A silhueta permanece legível nas vistas ortogonais.' },
-      { id: 'transicoes', prioridade: 2, estado: 'aberto', criterio: 'Transições relevantes têm intenção explícita, sem término seco involuntário.' },
-      { id: 'material', prioridade: 3, estado: 'aberto', criterio: 'O material é distinguível pela forma, acabamento e leitura nas vistas canônicas.' },
-      { id: 'semantica', prioridade: 4, estado: 'aberto', criterio: 'Cada parte esperada continua identificável e mensurável pela descrição headless.' },
-    ],
-    provas: ['descricao-headless', 'bancada-quatro-vistas'],
+  const plano = await planejarPacote({ id, peca, modo, partesEsperadas, raizPacotes });
+  await criarPacoteAtomico({
+    id, peca, modo, partesEsperadas, confirmacao: plano.confirmacao, raizPacotes,
+  });
+  return {
+    destino: caminhoPacote(id, { raizPacotes }),
+    briefing: plano.briefing,
+    referencias: plano.referencias,
   };
-  const referencias = {
-    formato: 'mecanifica.referencias-modelagem',
-    versao: 1,
-    ausenciaDeclarada: true,
-    referencias: [],
-  };
-  validarPacote(briefing, referencias, modo === 'refinamento' ? { partesDisponiveis: alvo.partes } : {});
-  mkdirSync(raizPacotes, { recursive: true });
-  /* mkdir sem recursive no destino é a trava de corrida e de sobrescrita. */
-  mkdirSync(destino);
-  writeFileSync(join(destino, 'briefing.json'), serializarCanonico(briefing), { encoding: 'utf8', flag: 'wx' });
-  writeFileSync(join(destino, 'referencias.json'), serializarCanonico(referencias), { encoding: 'utf8', flag: 'wx' });
-  return { destino, briefing, referencias };
 }
 
 if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {

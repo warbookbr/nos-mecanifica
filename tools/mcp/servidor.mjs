@@ -5,8 +5,9 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { z } from 'zod';
 import { ferramentasRevisao } from './perfis/revisao.mjs';
+import { ferramentasAutoria } from './perfis/autoria.mjs';
 import {
-  PERFIL, TRANSPORTE, VERSAO_CONTRATO_MCP,
+  PERFIL, PERFIL_AUTORIA, TRANSPORTE, VERSAO_CONTRATO_MCP,
 } from './contratos.mjs';
 import { listarCatalogoDePacotes } from '../modelagem/formato-pacote.mjs';
 
@@ -68,8 +69,8 @@ function respostaFalhaInterna(nome, erro) {
   };
 }
 
-function registrarPerfil(server) {
-  for (const ferramenta of ferramentasRevisao) {
+function registrarFerramentas(server, ferramentas) {
+  for (const ferramenta of ferramentas) {
     server.registerTool(
       ferramenta.nome,
       {
@@ -77,7 +78,7 @@ function registrarPerfil(server) {
         description: ferramenta.descricao,
         inputSchema: ferramenta.inputSchema,
         outputSchema: ferramenta.outputSchema,
-        annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+        annotations: ferramenta.annotations ?? { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       },
       async (entrada) => {
         try {
@@ -139,15 +140,23 @@ function registrarRecursos(server) {
   );
 }
 
-export function criarServidor() {
+/* Seleciona o perfil no boot, não em tempo de execução: cada instância do
+   servidor anuncia exatamente um perfil, então `revisao` nunca ganha uma
+   ferramenta de escrita e `autoria` nunca herda os recursos de `revisao`.
+   Qualquer valor que não seja `autoria` cai em `revisao` (default seguro). */
+export function criarServidor({ perfil = PERFIL } = {}) {
   const server = new McpServer(IDENTIDADE);
-  registrarPerfil(server);
-  registrarRecursos(server);
+  if (perfil === PERFIL_AUTORIA) {
+    registrarFerramentas(server, ferramentasAutoria);
+  } else {
+    registrarFerramentas(server, ferramentasRevisao);
+    registrarRecursos(server);
+  }
   return server;
 }
 
-export function iniciarServidor() {
-  return serveStdio(() => criarServidor(), {
+export function iniciarServidor({ perfil = process.env.MECANIFICA_MCP_PERFIL || PERFIL } = {}) {
+  return serveStdio(() => criarServidor({ perfil }), {
     onerror: (erro) => process.stderr.write(`mecanifica-mcp: ${erro.message}\n`),
   });
 }

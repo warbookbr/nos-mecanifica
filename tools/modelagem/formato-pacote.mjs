@@ -380,6 +380,14 @@ export function caminhoDentro(raiz, candidato) {
   return relativo !== '' && !relativo.startsWith('..') && !isAbsolute(relativo);
 }
 
+/* `existsSync` segue symlinks: um link quebrado (aponta pra nada) devolve
+   `false` mesmo havendo algo naquele caminho. Para checagens de segurança
+   (existe algo aqui que eu preciso recusar?) o que importa é `lstatSync` não
+   lançar — cobre arquivo, pasta ou symlink (quebrado ou não), sem seguir. */
+export function algoExisteEm(caminho) {
+  try { lstatSync(caminho); return true; } catch { return false; }
+}
+
 /* Resolve `nome` (componente simples, sem separador) dentro de `pastaReal` —
    que já precisa ser um caminho real, sem symlinks — e devolve o caminho
    literal do resultado, ou `null` fail-closed. Duas checagens, nessa ordem:

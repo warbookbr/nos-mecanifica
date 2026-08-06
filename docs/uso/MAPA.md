@@ -5,7 +5,7 @@
 > projeção. `npm run mapa:check` (CI) falha se isto estiver velho ou se
 > algum arquivo-fonte estiver sem cabeçalho.
 
-252 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
+258 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
 
 ## (raiz)
 
@@ -301,11 +301,13 @@
 ## tools/mcp/
 
 - `contratos.mjs` — contratos.mjs — schemas e respostas públicas do perfil MCP somente leitura.
+- `mcp-autoria.test.mjs` — mcp-autoria.test.mjs — contrato real de stdio do perfil `autoria`: duas ferramentas, nenhum recurso, prova caixa-preta plano→confirmação→aplicação com worksp…
 - `mcp.test.mjs` — mcp.test.mjs — contrato real de stdio, catálogo, recursos e ferramentas MCP.
 - `servidor.mjs` — servidor.mjs — servidor MCP local stdio do perfil revisao, sem escrita.
 
 ## tools/mcp/perfis/
 
+- `autoria.mjs` — autoria.mjs — adaptador MCP fino do perfil de escrita confinada e atômica. Não duplica regra de negócio: planejar_pacote e criar_pacote só traduzem entrada/s…
 - `revisao.mjs` — revisao.mjs — adaptador MCP fino para os serviços existentes de modelagem.
 
 ## tools/mecanifica/
@@ -350,10 +352,14 @@
 ## tools/modelagem/
 
 - `comparar-revisao.mjs` — CLI fino: lê dois JSONs, usa somente o núcleo puro e escreve JSON canônico.
+- `criar-pacote.mjs` — criar-pacote.mjs — aplicação atômica e confinada do plano de `planejar-pacote.mjs`. Recalcula o plano pelo mesmo serviço, exige a confirmação exata dele, esc…
+- `criar-pacote.test.mjs` — criar-pacote.test.mjs — aplicação atômica: confirmação, confinamento, symlinks, corrida, falha injetada e ausência de resíduo.
 - `critica-modelagem.mjs` — CLI fino: valida crítica sem abrir navegador, peça ou Oficina.
 - `formato-pacote.mjs` — formato-pacote.mjs — contrato pequeno, estrito e canônico do pacote de modelagem assistida. Não conhece Three.js, domínio automotivo ou runtime de navegador:…
 - `pacote-modelagem.test.mjs` — pacote-modelagem.test.mjs — marco 1: bytes reprodutíveis e recusa explícita para tudo que faria uma IA trabalhar com contexto frágil ou posicional.
-- `preparar-pacote.mjs` — preparar-pacote.mjs — cria só o esqueleto canônico; uma pasta já existente é sempre erro. Assim, uma segunda tentativa nunca apaga briefing ou crítica.
+- `planejar-pacote.mjs` — planejar-pacote.mjs — núcleo puro, sem escrita, do plano de autoria de um pacote canônico. `preparar-pacote.mjs` (CLI) e o perfil MCP `autoria` (`planejar_pa…
+- `planejar-pacote.test.mjs` — planejar-pacote.test.mjs — plano puro, sem escrita: determinismo da confirmação, recusas estruturadas e paridade de defaults com a CLI.
+- `preparar-pacote.mjs` — preparar-pacote.mjs — CLI fina sobre o mesmo núcleo de `planejar-pacote.mjs` e `criar-pacote.mjs`: plano, confirmação e aplicação atômica em um único comando…
 - `revisao-modelagem.mjs` — Revisão de modelagem — núcleo puro do ciclo assistido por IA.
 - `revisao-modelagem.test.mjs` — Prova determinismo, validação e comparação dos artefatos neutros de revisão e crítica.
 - `revisar-pacote.mjs` — revisar-pacote.mjs — marco 2 do fluxo assistido: a única ponte entre o pacote, a régua headless e as quatro câmeras da bancada.
