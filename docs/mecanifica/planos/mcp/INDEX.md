@@ -37,7 +37,7 @@ já comprovadas da Mecanifica.
 | 1. Leitura e revisão | Expor inspeção, validação, comparação e prova visual somente leitura sobre os serviços existentes. | preparação do núcleo e das CLIs; Fatias 1A e 1B; avaliação consolidada; correção de descoberta |
 | 2. Autoria | Expor criação e alteração somente depois que alvo, transação, formato e revalidação estiverem definidos fora do adaptador MCP. | tentativa de autoria controlada; futuras etapas exigem nova definição e plano |
 | 3. Materiais | Expor materiais somente depois de existir contrato canônico independente da porta de acesso. | candidato |
-| 4. Orquestração e distribuição | Transportar e operar o MCP com autenticação e múltiplos consumidores quando o valor local estiver comprovado. | candidato |
+| 4. Orquestração e distribuição | Transportar e operar o MCP com autenticação e múltiplos agentes quando o valor local estiver comprovado. | candidato |
 
 Os módulos são um mapa de exposição, não o roteiro mestre da autoria. Uma linha
 futura não autoriza implementação até existir um plano executivo ativo.
@@ -54,7 +54,7 @@ futura não autoriza implementação até existir um plano executivo ativo.
 | Autoria controlada de pacotes | concluído: interromper | Módulo 1 aprovado | [plano datado](../2026-08-05-mcp-autoria-controlada.md); PR #25 fechado sem merge por bloqueio de publicação atômica e `no-clobber` em API portátil |
 | Autoria de receitas e montagens | não definida | formato e serviços internos de autoria; alvo explícito; transação; mapa de dependências; revalidação | precisa de definição e plano próprios; não é continuação automática da autoria de pacotes |
 | Contrato e ferramentas de materiais | candidato | contrato canônico prévio | provas determinísticas separadas da autoria geométrica |
-| Distribuição e orquestração | candidato | valor local comprovado | decisão separada sobre HTTP, autenticação e múltiplos clientes |
+| Distribuição e orquestração | candidato | valor local comprovado | decisão separada sobre HTTP, autenticação e múltiplos agentes |
 
 ## Regras do programa
 
