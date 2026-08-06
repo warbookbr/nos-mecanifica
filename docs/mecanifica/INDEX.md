@@ -1,26 +1,26 @@
 # Mecanifica — entrada atual
 
-Este repositório mantém a autoria procedural da Mecanifica: núcleo geométrico,
+Este repositório mantém a oficina procedural para IA: núcleo geométrico,
 receitas determinísticas de peças, bancada de inspeção e ferramentas de medição,
-revisão e exportação para conteúdo criado por IA.
+revisão e validação.
 
-O produto apresentado ao cliente vive em
-[`warbookbr/mecanica`](https://github.com/warbookbr/mecanica). A aplicação
-jogável, a Oficina humana e o som foram removidos desta árvore.
-`bancada.html` é a única aplicação publicada aqui.
+O objetivo é melhorar e facilitar o trabalho da IA ao criar, organizar,
+inspecionar, corrigir e manter objetos 3D mecânicos. Interface humana, jogo,
+narrativa e apresentação externa não definem o escopo. A Oficina humana, a
+aplicação jogável e o som foram removidos desta árvore. `bancada.html` é a única
+aplicação publicada aqui.
 
 ## Estado atual
 
 - Casos 1 e 2 da homologação estão concluídos; o Caso 3 não foi iniciado.
 - Não há plano executivo ativo.
-- O Módulo 1 do MCP — leitura, modelagem assistida e revisão somente leitura —
-  foi aprovado após as Fatias 1A e 1B, a avaliação consolidada e a correção de
-  descoberta.
+- O Módulo 1 do MCP — leitura e revisão somente leitura — foi aprovado após as
+  Fatias 1A e 1B, a avaliação consolidada e a correção de descoberta.
 - A primeira tentativa de autoria controlada foi encerrada com decisão
   `interromper`; a issue #23 foi concluída e o PR #25 foi fechado sem merge.
 - O MCP atual continua sendo uma porta de leitura e auditoria. Ele não define o
   núcleo, o formato de peça ou a futura arquitetura de montagem.
-- A ponte de apresentação e a bancada publicada existem e são usadas pelos
+- Os adaptadores de inspeção e a bancada publicada existem e são usados pelos
   gates.
 - Hierarquia semântica mínima, consulta de subárvore, isolamento e contexto
   visual existem para peças.
@@ -53,7 +53,7 @@ o núcleo nem define o modelo de autoria.
 |---|---|
 | `prototipos/fps/v3/motor/` | núcleo procedural e adaptadores compatíveis |
 | `prototipos/fps/v3/pecas/` | receitas determinísticas de peças |
-| `bancada.html`, `src/` | bancada neutra e ponte de apresentação |
+| `bancada.html`, `src/` | bancada neutra e adaptadores de inspeção |
 | `tools/bancadas/` | porteiro, criação, exportação e gabaritos |
 | `tools/mecanifica/` | gates da bancada, revisão e contratos |
 | `tools/mcp/` | adaptador MCP sobre serviços existentes; hoje principalmente leitura |
@@ -67,8 +67,8 @@ formato canônico. Não invente uma localização por implicação.
 ## Fontes de verdade
 
 1. Este índice para a entrada e o estado atual.
-2. [`VISAO.md`](VISAO.md) para a separação entre autoria e produto e o horizonte
-   de carros e robôs.
+2. [`VISAO.md`](VISAO.md) para o objetivo centrado na IA e o horizonte de carros
+   e robôs.
 3. [`AUTORIA-IA.md`](AUTORIA-IA.md) para o modelo de autoria de peças e sistemas
    compostos.
 4. [`ARQUITETURA.md`](ARQUITETURA.md) para fronteiras técnicas atuais e direção
@@ -76,7 +76,7 @@ formato canônico. Não invente uma localização por implicação.
 5. [`MONTAGENS-SEMANTICAS.md`](MONTAGENS-SEMANTICAS.md) para composição
    recursiva, relações, dependências e níveis de maturidade.
 6. [`BANCADA-E-APRESENTACAO.md`](BANCADA-E-APRESENTACAO.md) para inspeção visual
-   e contexto de trabalho.
+   e contexto de trabalho da IA.
 7. [`FLUXO-MODELAGEM-IA.md`](FLUXO-MODELAGEM-IA.md) para o fluxo operacional
    atual de uma peça e seus limites.
 8. `docs/mecanifica/planos/README.md`, `docs/mecanifica/planos/mcp/INDEX.md` e
@@ -89,7 +89,7 @@ formato canônico. Não invente uma localização por implicação.
 
 ## Leitura por tarefa
 
-- Estado, produto e horizonte: `VISAO.md`, este índice e `planos/README.md`.
+- Estado, objetivo e horizonte: `VISAO.md`, este índice e `planos/README.md`.
 - Princípios de autoria: `AUTORIA-IA.md`.
 - Peças versus montagens, carro, motor e dependências:
   `MONTAGENS-SEMANTICAS.md` e `ARQUITETURA.md`.
@@ -154,7 +154,6 @@ npm run criar -- _viga
 - Criar contrato genérico de materiais.
 - Fechar as capacidades ainda abertas comprovadas em A-4, A-6, A-7, A-8, A-16
   e A-29.
-- Tarefas de cena, narrativa e produto devem apontar para `warbookbr/mecanica`.
 
 Nenhuma pendência desta lista autoriza implementação automática. Um recorte só
 abre quando existir plano executivo ativo.
