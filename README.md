@@ -1,21 +1,33 @@
 # Mecanifica
 
-Repositório de autoria procedural para IA: núcleo geométrico, receitas
-determinísticas, bancada de inspeção e ferramentas de medição e validação para o
-simulador 3D Mecanifica.
+Oficina procedural para IA criar, organizar, inspecionar, medir e corrigir
+objetos 3D mecânicos. O repositório reúne o núcleo geométrico, receitas
+determinísticas, bancada de inspeção e ferramentas de validação necessárias para
+a IA evoluir peças, montagens, carros e, futuramente, robôs.
 
-## Portas
+## Acesso
 
-- [Abrir a Mecânica](https://warbookbr.github.io/mecanica/) — produto do cliente,
-  mantido em [`warbookbr/mecanica`](https://github.com/warbookbr/mecanica).
 - [Abrir a bancada](https://warbookbr.github.io/nos-mecanifica/bancada.html) —
   seleção, isolamento, contexto fantasma, explosão e vistas reproduzíveis.
 
-Este repositório publica somente `bancada.html`. A aplicação jogável, a Oficina
-humana, o som e suas pontes foram removidos. O produto carrega peças resolvidas;
-ele não executa o núcleo procedural.
+`bancada.html` é a única aplicação publicada. A Oficina humana, a aplicação
+jogável e o som foram removidos porque não ampliavam o trabalho de modelagem da
+IA neste repositório.
 
-## Direção
+## Objetivo
+
+O objetivo é melhorar e facilitar o trabalho da IA durante todo o ciclo de
+autoria:
+
+```text
+entender o alvo
+→ criar ou alterar a definição
+→ executar o núcleo
+→ observar e medir o resultado
+→ validar relações
+→ corrigir
+→ revalidar os conjuntos afetados
+```
 
 A unidade geométrica editável é a **peça**. A unidade de composição é a
 **montagem**. Montagens podem conter outras montagens e formar sistemas, carros
@@ -58,8 +70,7 @@ npm test
 npm run criar -- _viga
 ```
 
-Abra `http://localhost:5173/nos-mecanifica/bancada.html`. Para o produto do
-cliente, use o repositório [`warbookbr/mecanica`](https://github.com/warbookbr/mecanica).
+Abra `http://localhost:5173/nos-mecanifica/bancada.html`.
 
 Comece por [`docs/mecanifica/INDEX.md`](docs/mecanifica/INDEX.md). Ele aponta
 fontes de verdade, leitura por tarefa, comandos e gates. O inventário completo
