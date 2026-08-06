@@ -9,6 +9,10 @@ autoriza leitura, rastreamento de dados, execução de provas e produção de
 relatório, mas não autoriza refatorar o motor, alterar receitas, implementar
 montagens ou acrescentar escrita ao MCP.
 
+O plano executivo permanece curto conforme o contrato desta pasta. O método,
+as perguntas de inspeção e o padrão de evidência estão detalhados em
+[`../PROTOCOLO-DIAGNOSTICO-MOTOR.md`](../PROTOCOLO-DIAGNOSTICO-MOTOR.md).
+
 Um backlog, programa ou linha candidata não autoriza implementação automática.
 Um plano só fica ativo quando tem objetivo, escopo, gates, arquivos reservados,
 critério de saída e encerramento registrado.
