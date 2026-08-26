@@ -8,7 +8,7 @@ import { medirRegiaoSuave, suavizarGuiadoPorC1 } from './suavizar-c1.mjs';
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const raiz = path.resolve(aqui, '..', '..', '..');
 const destino = path.join(aqui, 'evidencias');
-const fonte = path.join(raiz, 'autoria-assistida', 'rascunhos-defeituosos', 'prova-cage-quarto-dianteiro', 'evidencias', 'malha-nivel-2.json');
+const fonte = path.join(raiz, 'autoria-assistida', 'experimentos', 'prova-cage-quarto-dianteiro', 'evidencias', 'malha-nivel-2.json');
 const diagnosticos = [
   { tipo: 'zebra', camera: 'isometrica' }, { tipo: 'zebra', camera: 'lateral' }, { tipo: 'zebra', camera: 'frontal' }, { tipo: 'zebra', camera: 'superior' },
   { tipo: 'isofota', camera: 'isometrica' }, { tipo: 'curvatura', camera: 'isometrica' },
@@ -37,7 +37,7 @@ export async function gerarEvidenciasN35() {
   const resultado = {
     formato: 'mecanifica.sonda-suavizacao-n3-5@1',
     escopo: 'quarto dianteiro reprovado; suavização C1 sem busca, sem receita nova e sem promoção de artefato',
-    fonte: 'rascunhos-defeituosos/prova-cage-quarto-dianteiro/evidencias/malha-nivel-2.json',
+    fonte: 'experimentos/prova-cage-quarto-dianteiro/evidencias/malha-nivel-2.json',
     parametros: sonda.parametros,
     antes: { c1: { diedroP95Graus: analiseAntes.diedroP95Graus, parcelaAbrupta: analiseAntes.parcelaAbrupta }, regiaoSuave: suaveAntes },
     depois: { c1: { diedroP95Graus: analiseDepois.diedroP95Graus, parcelaAbrupta: analiseDepois.parcelaAbrupta }, regiaoSuave: suaveDepois },

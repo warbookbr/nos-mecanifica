@@ -1,7 +1,7 @@
 {
   "formato": "mecanifica.sonda-suavizacao-n3-5@1",
   "escopo": "quarto dianteiro reprovado; suavização C1 sem busca, sem receita nova e sem promoção de artefato",
-  "fonte": "rascunhos-defeituosos/prova-cage-quarto-dianteiro/evidencias/malha-nivel-2.json",
+  "fonte": "experimentos/prova-cage-quarto-dianteiro/evidencias/malha-nivel-2.json",
   "parametros": {
     "iteracoes": 6,
     "lambda": 0.18,

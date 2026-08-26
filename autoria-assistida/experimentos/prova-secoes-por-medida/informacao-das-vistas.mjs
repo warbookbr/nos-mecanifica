@@ -11,7 +11,7 @@
    variando só a "cheiura" da seção — o expoente de queda do flanco. Se a vista
    frontal mudar muito, a informação está lá. Se quase não mudar, não está. */
 
-import { secaoDoPerfil } from '../../rascunhos-defeituosos/prova-cage-quarto-dianteiro/quarto-dianteiro.mjs';
+import { secaoDoPerfil } from '../prova-cage-quarto-dianteiro/quarto-dianteiro.mjs';
 
 /* Reimplementa a seção com o expoente exposto. A geometria é a mesma do
    quarto dianteiro; só a cheiura vira parâmetro. */

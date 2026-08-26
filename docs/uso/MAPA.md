@@ -5,7 +5,7 @@
 > projeção. `npm run mapa:check` (CI) falha se isto estiver velho ou se
 > algum arquivo-fonte estiver sem cabeçalho.
 
-676 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
+679 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
 
 ## (raiz)
 
@@ -18,7 +18,7 @@
 
 ## .claude/agents/
 
-- `critico-visual.md` — Crítico visual sem contexto da Mecanifica. Recebe o DESENHO ALVO e as vistas do MODELO e responde se o segundo bate com o primeiro. Use antes de fechar qualq…
+- `critico-visual.md` — Crítico visual sem contexto da Mecanifica. Recebe o DESENHO ALVO e as vistas do MODELO e responde se o segundo bate com o primeiro. É peneira antes de levar …
 - `game-builder.md` — Implementa mudanças delimitadas na Mecanifica, especialmente no núcleo procedural, receitas, bancada e validação, sempre provadas por medição. Use para um br…
 - `revisor-adversarial.md` — Revisor adversarial por risco da Mecanifica — tenta quebrar mudanças de núcleo, formato salvo, autoria, montagem ou julgamento antes da integração. Use quand…
 
@@ -41,6 +41,10 @@
 ## .claude/skills/desenhar-prancha/
 
 - `SKILL.md` — Desenhar uma prancha ortográfica alvo da Mecanifica com o motor de prancha — silhueta, aberturas, painéis e cotas em vistas lateral, frontal, traseira e supe…
+
+## .claude/skills/modelar-dirigido/
+
+- `SKILL.md` — Modelar forma 3D num laço em que o usuário julga e a IA executa — ele corrige em linguagem comum ("o teto está baixo", "o arco está quadrado") e a IA mexe na…
 
 ## autoria-assistida/experimentos/ab-fluxo-ia-dobradica/
 
@@ -113,6 +117,21 @@
 - `gerar-vistas.mjs` — Gera as vistas globais isoladas da primeira compilação R2.
 - `subdividir.mjs` — Compilador privado R2: um nível Catmull-Clark para cage de quadriláteros.
 - `subdividir.test.mjs` — Garante que a compilação vem da cage e preserva a semântica das faces.
+
+## autoria-assistida/experimentos/prova-cage-quarto-dianteiro/
+
+- `alteracao-local.mjs` — alteracao-local.mjs — Q5 da prova P2: `elevar a crista 25 mm`. Mede quantos loops a alteração toca, o que muda na malha compilada e se a reexecução dá o mesm…
+- `cage.mjs` — cage.mjs — formato `mecanifica.cage-quad@1` e seu validador, conforme docs/mecanifica/CHASSI-P1-CONTRATO-DA-CAGE.md. Privado e descartável: é a prova P2, não…
+- `cage.test.mjs` — Testes do formato e do validador da cage. Cada caso amarra uma regra do contrato de P1 e prova que ela RECUSA, não que ela avisa.
+- `compilar.mjs` — compilar.mjs — compila a cage do quarto dianteiro, mede e desenha. É o passo Q4 da prova P2: nada aqui vira peça publicada.
+- `forma-nao-automotiva.mjs` — forma-nao-automotiva.mjs — a segunda metade da prova P2: a mesma cage e a mesma subdivisão sobre um objeto que não é carro. Se a representação carregasse voc…
+- `quarto-dianteiro.mjs` — quarto-dianteiro.mjs — a cage do quarto dianteiro da prova P2. Derivada dos landmarks de docs/mecanifica/CHASSI-P0-ALVO-E-LIMIARES.md, não escrita à mão: a c…
+- `quarto-dianteiro.test.mjs` — Testes da cage do quarto dianteiro e da forma não automotiva. O que se prova aqui é o que P2 exige: abertura real, retorno de borda, regiões da mesma superfí…
+- `rejeicoes-p0.mjs` — rejeicoes-p0.mjs — as oito condições de rejeição visual da seção 7 de docs/mecanifica/CHASSI-P0-ALVO-E-LIMIARES.md, EXECUTÁVEIS.
+- `rejeicoes-p0.test.mjs` — Um detector que nunca reprova e um que sempre reprova são igualmente inúteis. Cada condição automatizada ganha AQUI um par: uma cage que ela deve deixar pass…
+- `render.mjs` — render.mjs — desenho sólido da malha compilada, por pintor. Sem dependência e sem navegador: projeta, ordena por profundidade e preenche com sombreado da nor…
+- `subdividir.mjs` — subdividir.mjs — Catmull-Clark determinística com vinco semi-agudo, para a prova P2. Módulo PRIVADO e descartável: não é o núcleo, não vira operação registra…
+- `subdividir.test.mjs` — Testes do Catmull-Clark da prova P2. Os casos foram escolhidos para DENUNCIAR implementação errada, não para confirmar a certa: contagem exata, convergência,…
 
 ## autoria-assistida/experimentos/prova-captura-r1b/
 
@@ -237,21 +256,6 @@
 - `apoio-prismatico.js` — Família prismática, produzida por subgrafo declarativo privado.
 - `nervura-triangular.js` — Família triangular, produzida pelo subgrafo que usa a extensão nativa.
 - `pino-circular.js` — Família de revolução, executada pelo registro explícito completo da R10.
-
-## autoria-assistida/rascunhos-defeituosos/prova-cage-quarto-dianteiro/
-
-- `alteracao-local.mjs` — alteracao-local.mjs — Q5 da prova P2: `elevar a crista 25 mm`. Mede quantos loops a alteração toca, o que muda na malha compilada e se a reexecução dá o mesm…
-- `cage.mjs` — cage.mjs — formato `mecanifica.cage-quad@1` e seu validador, conforme docs/mecanifica/CHASSI-P1-CONTRATO-DA-CAGE.md. Privado e descartável: é a prova P2, não…
-- `cage.test.mjs` — Testes do formato e do validador da cage. Cada caso amarra uma regra do contrato de P1 e prova que ela RECUSA, não que ela avisa.
-- `compilar.mjs` — compilar.mjs — compila a cage do quarto dianteiro, mede e desenha. É o passo Q4 da prova P2: nada aqui vira peça publicada.
-- `forma-nao-automotiva.mjs` — forma-nao-automotiva.mjs — a segunda metade da prova P2: a mesma cage e a mesma subdivisão sobre um objeto que não é carro. Se a representação carregasse voc…
-- `quarto-dianteiro.mjs` — quarto-dianteiro.mjs — a cage do quarto dianteiro da prova P2. Derivada dos landmarks de docs/mecanifica/CHASSI-P0-ALVO-E-LIMIARES.md, não escrita à mão: a c…
-- `quarto-dianteiro.test.mjs` — Testes da cage do quarto dianteiro e da forma não automotiva. O que se prova aqui é o que P2 exige: abertura real, retorno de borda, regiões da mesma superfí…
-- `rejeicoes-p0.mjs` — rejeicoes-p0.mjs — as oito condições de rejeição visual da seção 7 de docs/mecanifica/CHASSI-P0-ALVO-E-LIMIARES.md, EXECUTÁVEIS.
-- `rejeicoes-p0.test.mjs` — Um detector que nunca reprova e um que sempre reprova são igualmente inúteis. Cada condição automatizada ganha AQUI um par: uma cage que ela deve deixar pass…
-- `render.mjs` — render.mjs — desenho sólido da malha compilada, por pintor. Sem dependência e sem navegador: projeta, ordena por profundidade e preenche com sombreado da nor…
-- `subdividir.mjs` — subdividir.mjs — Catmull-Clark determinística com vinco semi-agudo, para a prova P2. Módulo PRIVADO e descartável: não é o núcleo, não vira operação registra…
-- `subdividir.test.mjs` — Testes do Catmull-Clark da prova P2. Os casos foram escolhidos para DENUNCIAR implementação errada, não para confirmar a certa: contagem exata, convergência,…
 
 ## autoria-assistida/rascunhos-defeituosos/prova-superficie-aceite/
 
@@ -503,7 +507,7 @@
 - `2026-08-20-validacao-integrada-mecanifica.md` — Validação integrada da Mecanifica — valor Agent-First
 - `2026-08-23-arquitetura-hibrida-familias-modelagem-ia.md` — Histórico cancelado — modelador por seleção
 - `2026-08-23-redesenho-cage-r2b-controle-vertical.md` — Redesenho R2B — controle vertical da cage direta
-- `2026-08-25-modelador-inverso-priors-familia.md` — Modelador inverso com priors por família
+- `2026-08-26-modelagem-dirigida-pelo-usuario.md` — Modelagem dirigida pelo usuário
 - `BACKLOG.md` — Backlog aberto
 - `MODELO.md` — [ID] — resultado curto
 - `README.md` — Planos da Mecanifica
@@ -530,6 +534,11 @@
 - `2026-08-03-inspecao-reproduzivel-de-par.md` — AUT-2026-19 — inspeção reproduzível de par
 - `2026-08-03-selecao-subarvore-semantica.md` — AUT-2026-17 — seleção de subárvore semântica
 - `ENCERRAMENTO-PLANO-MESTRE-2026-08-02.md` — Encerramento do plano mestre — 2 de agosto de 2026
+
+## docs/mecanifica/planos/congelados/
+
+- `2026-08-25-modelador-inverso-priors-familia.md` — Modelador inverso com priors por família
+- `README.md` — Planos congelados
 
 ## docs/mecanifica/planos/mcp/
 

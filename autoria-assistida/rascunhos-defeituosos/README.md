@@ -12,6 +12,17 @@ geometria.
 Fixtures mínimos de teste vivem fora daqui porque exercitam contratos do motor,
 não representam acervo visual ou receitas candidatas a uso.
 
+## Saída registrada — 2026-08-26
+
+`prova-cage-quarto-dianteiro/` **saiu** deste diretório para
+`../experimentos/prova-cage-quarto-dianteiro/`. Motivo: é a única peça da
+investigação de forma que o usuário classificou como aceitável, e o plano ativo
+de modelagem dirigida a adota como base. Enquanto estivesse aqui, a regra desta
+pasta — "não são base de promoção" — bloquearia esse plano em silêncio.
+
+A saída não homologa a geometria nem a publica em catálogo. Ela apenas retira a
+peça da quarentena para que trabalho novo possa partir dela.
+
 ## Relações preservadas na migração
 
 - Cada experimento foi movido inteiro; seus imports relativos entre carregador,

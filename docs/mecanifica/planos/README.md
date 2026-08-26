@@ -3,28 +3,28 @@
 ## Estado
 
 **Plano ativo:**
-[`2026-08-25-modelador-inverso-priors-familia.md`](2026-08-25-modelador-inverso-priors-familia.md).
+[`2026-08-26-modelagem-dirigida-pelo-usuario.md`](2026-08-26-modelagem-dirigida-pelo-usuario.md).
 
-O plano anterior de seleção foi **cancelado** antes de implementação. A
-premissa “a IA compara bem” não tinha passado pelo teste repetido e embaralhado
-que o próprio plano reservava para S1; o gerador manual continuava definindo o
-limite da forma alcançável; e o alvo N6 não contém calibração para representar
-um objeto 3D exato. A hipótese permanece no histórico, sem autorização.
+O laço vigente separa as duas tarefas por dono: **o usuário decide se a forma
+está boa**, dizendo em linguagem comum o que está errado, e a IA executa a
+correção alterando grandezas com nome. Nenhuma métrica aprova forma. O laço está
+descrito em [`../../../.claude/skills/modelar-dirigido/SKILL.md`](../../../.claude/skills/modelar-dirigido/SKILL.md).
 
-O mecanismo vigente é [modelagem inversa com priors por
-família](../DOSSIE-MODELADOR-INVERSO-PRIORS-FAMILIA.md). Veículos partem de
-arquétipos automotivos semanticamente alinhados e deformáveis; humanoides usam
-esqueleto, volumes e juntas; peças usam features e interfaces funcionais. As
-famílias compartilham receitas, identidade, montagem, revisão, câmeras,
-evidência e MCP, não um gerador universal.
+O [modelador inverso com priors por família](congelados/2026-08-25-modelador-inverso-priors-familia.md)
+foi **congelado** em 2026-08-26, não cancelado. Ele não foi refutado: sua
+primeira fase existia para provar que uma IA julga forma de modo confiável, e
+essa pergunta saiu do caminho crítico quando o usuário assumiu o julgamento. A
+pasta [`congelados/`](congelados/README.md) explica a diferença entre congelado,
+cancelado e concluído, e cada plano guardado lá declara sua condição de
+descongelamento. A infraestrutura de calibração cega em `tools/modelagem/`
+continua no repositório, verde e sem consumidor ativo.
 
-A primeira execução é **P0, confiança antes de geometria**: fechar a suíte no
-Windows, classificar cada alvo, produzir um canário calibrado e medir o crítico
-em pares frios, repetidos, embaralhados e com holdout. Priors, fitting,
-preferência e novo carro só abrem pelos gates cumulativos escritos antes da
-implementação. O registro de falhas em
-[`GOTCHAS-AUTORIA-VISUAL.md`](../GOTCHAS-AUTORIA-VISUAL.md) é leitura
-obrigatória antes de abrir experimento.
+O plano por seleção, anterior a esse, foi **cancelado** antes de implementação e
+permanece nesta pasta com esse estado. A hipótese fica no histórico, sem
+autorização.
+
+O registro de falhas em [`GOTCHAS-AUTORIA-VISUAL.md`](../GOTCHAS-AUTORIA-VISUAL.md)
+é leitura obrigatória antes de abrir experimento.
 
 O [R2B com controle vertical](2026-08-23-redesenho-cage-r2b-controle-vertical.md)
 foi concluído com decisão `interromper`: sua melhor evidência continuou

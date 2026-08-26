@@ -1,7 +1,7 @@
 # Relatório P0 — confiança antes de geometria
 
 **Estado:** aberto, P0-A e P0-B executados; P0-C aguardando execução independente
-**Plano:** [`planos/2026-08-25-modelador-inverso-priors-familia.md`](planos/2026-08-25-modelador-inverso-priors-familia.md)
+**Plano:** [`planos/congelados/2026-08-25-modelador-inverso-priors-familia.md`](planos/congelados/2026-08-25-modelador-inverso-priors-familia.md) (congelado)
 **Execução detalhada:** [`../superpowers/plans/2026-08-25-modelador-inverso-priors-familia-p0.md`](../superpowers/plans/2026-08-25-modelador-inverso-priors-familia-p0.md)
 
 Este arquivo é o destino rastreável das evidências de P0. Sua existência não

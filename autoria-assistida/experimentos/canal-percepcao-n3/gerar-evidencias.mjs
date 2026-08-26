@@ -60,7 +60,7 @@ function corpoFerrariDaReceita() {
 }
 
 export function montarCorpusN3() {
-  const quarto = json(path.join(raiz, 'autoria-assistida', 'rascunhos-defeituosos', 'prova-cage-quarto-dianteiro', 'evidencias', 'malha-nivel-2.json'));
+  const quarto = json(path.join(raiz, 'autoria-assistida', 'experimentos', 'prova-cage-quarto-dianteiro', 'evidencias', 'malha-nivel-2.json'));
   return [
     { id: 'esfera-sintetica', vereditoHumano: 'sadio-por-construcao', malha: superficiesSinteticas.esfera() },
     { id: 'toro-sintetico', vereditoHumano: 'sadio-por-construcao', malha: superficiesSinteticas.toro() },

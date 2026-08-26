@@ -10,6 +10,11 @@ uma árvore de composição, relações entre peças ou revalidação de conjunt
 use também `../auditar-montagem/SKILL.md`; não transforme uma montagem em uma
 receita monolítica.
 
+**Se a qualidade do alvo for estética** — carroceria, carenagem, invólucro, algo
+que se aprova por "parece certo" e não por medida — use
+`../modelar-dirigido/SKILL.md`. Lá quem aprova é o usuário e a correção vem em
+linguagem comum. Esta skill trata de peça cuja correção é funcional.
+
 ## Caminho curto
 
 1. Descubra capacidades no [catálogo gerado](../../../docs/mecanifica/gerado/CATALOGO-CAPACIDADES.md)
@@ -59,7 +64,9 @@ receita monolítica.
 
 5. Registre pelo menos uma medida ou gate por rodada e itere sobre defeitos
    concretos. A bancada confirma enquadramento; não decide sozinha se a forma
-   atende ao briefing.
+   atende ao briefing. **Medida vale para o que é funcional.** Ela não aprova
+   forma estética: métrica de malha mede densidade de malha, e o registro dessa
+   confusão está em V-08 do `GOTCHAS-AUTORIA-VISUAL.md`.
 6. Rode `npm run criar -- minha-peca` para o estado do núcleo, manifesto,
    compatibilidade e gabarito, quando a receita local e esses artefatos forem
    autorizados. Esse visor legado é diagnóstico; não transforma a peça em
