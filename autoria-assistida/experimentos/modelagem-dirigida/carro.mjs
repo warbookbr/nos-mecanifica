@@ -36,6 +36,9 @@ export const VOCABULARIO = {
   'traseira.altura': 'a traseira está alta / baixa',
   'traseira.queda': 'a traseira cai rápido demais / é comprida demais',
   'soleira.altura': 'a soleira está alta / baixa',
+  'saia.altura': 'o fundo do carro na frente e atrás das rodas está alto / baixo',
+  'saia.recuoDaPonta': 'o para-choque desce muito perto / muito longe da ponta',
+  'saia.encosto': 'o fundo reto vai até muito perto / muito longe do arco',
   'meiaLargura.nariz': 'a frente está larga / estreita',
   'meiaLargura.paraLamaDianteiro': 'o para-lama da frente incha pouco / demais',
   'meiaLargura.cintura': 'falta cintura no meio / está estrangulado demais',
@@ -63,6 +66,9 @@ export const CARRO = {
   teto: { altura: 1300, comprimento: 900, recuo: 250 },
   traseira: { altura: 900, queda: 1900 },
   soleira: { altura: 300 },
+  /* O fundo do carro à frente e atrás das rodas. `encosto` é o quanto o trecho
+     reto avança em direção ao arco antes de a curva começar a subir. */
+  saia: { altura: 190, recuoDaPonta: 260, encosto: 60 },
 
   /* MEIA largura, sempre — a versão anterior misturava largura cheia no nariz
      com meia largura no para-lama e a planta saía com cara de pé. */
@@ -125,13 +131,23 @@ export function linhaDeBaixo(c) {
   /* O arco é um círculo em volta do centro da roda, que está em y = raio. A
      versão anterior punha o topo do arco em raio+folga — abaixo do topo da
      roda — e a roda saía para fora da carroceria. */
+  /* A SAIA é um trecho RETO, e por isso tem dois pontos na mesma altura em vez
+     de um só. Com um ponto só entre o para-choque e o arco, a interpolação
+     passava por ele fazendo barriga — a linha descia depois do para-choque e
+     subia de novo no arco, e o fundo do carro ficava abaulado. Dois pontos na
+     mesma altura fixam o trecho reto e deixam a curva virar só nas pontas. */
+  const raioDoArco = c.roda.raio + c.arco.folga;
+  const encostoDianteiro = e.dianteiro + raioDoArco + c.saia.encosto;
+  const encostoTraseiro = e.traseiro - raioDoArco - c.saia.encosto;
   return [
     { nome: 'ponta-do-parachoque', z: p.frente, y: c.nariz.altura - c.nariz.quedaDaPonta - 420 },
-    { nome: 'saia-dianteira', z: p.frente - 260, y: c.alturaLivre + 60 },
+    { nome: 'saia-dianteira-na-ponta', z: p.frente - c.saia.recuoDaPonta, y: c.saia.altura },
+    { nome: 'saia-dianteira-no-arco', z: encostoDianteiro, y: c.saia.altura },
     ...arco(c, e.dianteiro, 'dianteiro', 'saida'),
     { nome: 'soleira', z: 0, y: c.soleira.altura },
     ...arco(c, e.traseiro, 'traseiro', 'entrada'),
-    { nome: 'saia-traseira', z: p.tras + 240, y: c.alturaLivre + 60 },
+    { nome: 'saia-traseira-no-arco', z: encostoTraseiro, y: c.saia.altura },
+    { nome: 'saia-traseira-na-ponta', z: p.tras + c.saia.recuoDaPonta, y: c.saia.altura },
     { nome: 'ponta-do-parachoque-traseiro', z: p.tras, y: c.traseira.altura - 430 },
   ];
 }
