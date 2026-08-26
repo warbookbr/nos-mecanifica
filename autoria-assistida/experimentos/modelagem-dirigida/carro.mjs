@@ -27,6 +27,7 @@ export const VOCABULARIO = {
   'arco.transicao': 'o arco encontra a lateral de forma abrupta / arredondada demais',
   'nariz.altura': 'o nariz está baixo / alto',
   'nariz.quedaDaPonta': 'a ponta da frente cai demais / é chata demais',
+  'nariz.avancoDoAlto': 'o capô é arredondado / reto demais na frente',
   'capo.comprimento': 'o capô está comprido / curto',
   'capo.alturaNaBase': 'o capô está alto / baixo junto ao para-brisa',
   'paraBrisa.recuo': 'o para-brisa está deitado / em pé demais',
@@ -65,16 +66,16 @@ export const CARRO = {
   balancoDianteiro: 750,
   balancoTraseiro: 1035,
 
-  nariz: { altura: 900, quedaDaPonta: 350, alturaDoParachoque: 485 },
+  nariz: { altura: 900, quedaDaPonta: 210, alturaDoParachoque: 485, avancoDoAlto: 0.85 },
   capo: { comprimento: 1500, alturaNaBase: 950 },
   paraBrisa: { recuo: 700 },
-  teto: { altura: 1315, comprimento: 350, recuo: 250 },
+  teto: { altura: 1315, comprimento: 620, recuo: 250 },
   /* A traseira deixou de ser 'altura + queda' e passou a ser o que o usuário
      nomeia quando olha: o vidro de trás, o porta-malas e o para-choque. A
      `barriga` é o quanto o vidro arqueia acima da reta entre o fim do teto e o
      começo do porta-malas — no fastback ele arqueia pouco e vai longe. */
   vidroTraseiro: { barriga: 70 },
-  portaMalas: { altura: 910, comprimento: 670, queda: 260 },
+  portaMalas: { altura: 1010, comprimento: 670, queda: 260 },
   traseira: { alturaDoParachoque: 520 },
   /* Mesma lição da saia: um ponto só no meio não faz linha reta, faz barriga —
      aqui para baixo, com a soleira afundando entre as rodas. Dois pontos. */
@@ -131,7 +132,7 @@ export function linhaDeCima(c) {
   const zPortaMalas = p.tras + c.portaMalas.comprimento;
   return [
     { nome: 'ponta-do-nariz', z: p.frente, y: c.nariz.altura - c.nariz.quedaDaPonta },
-    { nome: 'alto-do-nariz', z: p.frente - c.balancoDianteiro * 0.55, y: c.nariz.altura },
+    { nome: 'alto-do-nariz', z: p.frente - c.balancoDianteiro * (1 - c.nariz.avancoDoAlto), y: c.nariz.altura },
     { nome: 'capo-na-base', z: zBaseParaBrisa, y: c.capo.alturaNaBase },
     { nome: 'topo-do-para-brisa', z: zTopoParaBrisa, y: c.teto.altura },
     { nome: 'fim-do-teto', z: zFimTeto, y: c.teto.altura },
@@ -216,10 +217,13 @@ function arco(c, zCentro, sufixo, ladoDaSoleira) {
      Do lado da saia não entra: lá a linha já desce, e forçar a transição criava
      uma ondinha no lugar de um gancho — troca de defeito, não conserto. */
   const primeiro = pontos[0], ultimo = pontos[pontos.length - 1];
+  /* A transição sai DIRETO na altura da soleira. Ela saía na altura do fim do
+     arco, e a soleira vinha depois mais embaixo: sobrava um degrau no encontro
+     dos dois — os dois pontos que o usuário circulou. */
   if (ladoDaSoleira === 'entrada') {
-    return [{ nome: `antes-do-arco-${sufixo}`, z: primeiro.z + c.arco.transicao, y: primeiro.y }, ...pontos];
+    return [{ nome: `antes-do-arco-${sufixo}`, z: primeiro.z + c.arco.transicao, y: c.soleira.altura }, ...pontos];
   }
-  return [...pontos, { nome: `depois-do-arco-${sufixo}`, z: ultimo.z - c.arco.transicao, y: ultimo.y }];
+  return [...pontos, { nome: `depois-do-arco-${sufixo}`, z: ultimo.z - c.arco.transicao, y: c.soleira.altura }];
 }
 
 /* Planta: meia largura ao longo de z. A cintura entre os para-lamas é o que
