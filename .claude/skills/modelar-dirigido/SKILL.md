@@ -21,6 +21,26 @@ Isso não é modéstia de protocolo. Seis tentativas anteriores neste repositór
 falharam com a IA no papel de juiz, e o registro está em
 `docs/mecanifica/GOTCHAS-AUTORIA-VISUAL.md`.
 
+## Regra zero — abrir o alvo ANTES de chutar
+
+Antes da primeira forma, abra a referência e olhe. Depois de cada rodada,
+sobreponha o seu contorno no dela e olhe de novo. A sobreposição é parte do
+laço, não uma conferência que se faz quando lembra.
+
+**A desculpa que parece boa e não é:** "não vou copiar os números da referência,
+senão a prova fica fácil". Não copiar número é razoável. Não *olhar* não é — e
+esse raciocínio já foi usado neste repositório para justificar exatamente o erro
+que ele deveria evitar. O resultado foi um carro genérico inventado de cabeça,
+apresentado como se fosse o alvo, com o alvo fechado na gaveta o tempo todo.
+
+Se a referência é imagem, abra a imagem. Se é coordenada medida, desenhe a
+coordenada e olhe o desenho. Nunca raciocine sobre uma referência que você não
+pôs na tela nesta sessão.
+
+E declare, em voz alta, **que carro você está fazendo**. Se você não consegue
+dizer, o usuário também não consegue julgar — ele fica corrigindo detalhe de um
+objeto cujo destino ninguém declarou.
+
 ## As três regras
 
 ### 1. Proporção se julga na lateral e na superior
@@ -60,6 +80,7 @@ para ele saber onde reclamar.
 
 ## O laço
 
+0. O alvo está aberto na tela. Se não estiver, abra antes de qualquer coisa.
 1. O usuário aponta o defeito em linguagem comum.
 2. Você identifica a grandeza. Se não existir, cria — e diz que criou.
 3. Você altera **só** aquilo.
@@ -68,7 +89,9 @@ para ele saber onde reclamar.
    conta como o objeto foi construído e costuma prever o defeito.
 5. Você relata: o que mudou, o que você observou, o que ainda te parece errado.
    Sem veredito de aprovação.
-6. O usuário julga. A rodada fecha na frase dele.
+6. Você sobrepõe o seu contorno no do alvo e relata o que a sobreposição
+   mostra, inclusive o que o usuário não perguntou.
+7. O usuário julga. A rodada fecha na frase dele.
 
 ## Antes de mandar a imagem
 
@@ -87,6 +110,8 @@ Duas conferências rápidas, porque as duas já custaram rodadas aqui:
   forma. Métrica de malha mede densidade de malha; está registrado em V-08.
 - Não conclua sobre proporção pela isométrica.
 - Não trate ausência de reclamação como aprovação.
+- Não produza forma antes de ter aberto o alvo. Não invente proporção "de
+  cabeça" quando existe referência disponível.
 - Não junte "está melhor" com "está bom". A primeira você pode dizer; a segunda
   não é sua.
 

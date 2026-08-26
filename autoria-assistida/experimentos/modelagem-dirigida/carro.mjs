@@ -33,9 +33,14 @@ export const VOCABULARIO = {
   'teto.altura': 'o teto está alto / baixo',
   'teto.comprimento': 'a cabine está comprida / curta',
   'teto.recuo': 'a cabine está muito à frente / muito atrás',
-  'traseira.altura': 'a traseira está alta / baixa',
-  'traseira.queda': 'a traseira cai rápido demais / é comprida demais',
+  'nariz.alturaDoParachoque': 'o para-choque da frente desce demais / de menos',
+  'vidroTraseiro.barriga': 'o vidro de trás está arqueado / reto demais',
+  'portaMalas.altura': 'a traseira está alta / baixa',
+  'portaMalas.comprimento': 'o porta-malas está comprido / curto',
+  'portaMalas.queda': 'a ponta da traseira cai demais / é chata demais',
+  'traseira.alturaDoParachoque': 'o para-choque de trás desce demais / de menos',
   'soleira.altura': 'a soleira está alta / baixa',
+  'soleira.recuoDoArco': 'a soleira reta começa muito perto / muito longe do arco',
   'saia.altura': 'o fundo do carro na frente e atrás das rodas está alto / baixo',
   'saia.recuoDaPonta': 'o para-choque desce muito perto / muito longe da ponta',
   'saia.encosto': 'o fundo reto vai até muito perto / muito longe do arco',
@@ -55,20 +60,32 @@ export const CARRO = {
   alturaLivre: 130,
 
   roda: { raio: 340, larguraDoArco: 250 },
-  arco: { folga: 45, aberturaAbaixoDoCentro: 30, transicao: 150 },
+  arco: { folga: 45, aberturaAbaixoDoCentro: 0, transicao: 150 },
 
-  balancoDianteiro: 930,
-  balancoTraseiro: 930,
+  balancoDianteiro: 750,
+  balancoTraseiro: 1035,
 
-  nariz: { altura: 820, quedaDaPonta: 170 },
+  nariz: { altura: 900, quedaDaPonta: 350, alturaDoParachoque: 485 },
   capo: { comprimento: 1500, alturaNaBase: 950 },
   paraBrisa: { recuo: 700 },
-  teto: { altura: 1300, comprimento: 900, recuo: 250 },
-  traseira: { altura: 900, queda: 1900 },
-  soleira: { altura: 300 },
+  teto: { altura: 1315, comprimento: 350, recuo: 250 },
+  /* A traseira deixou de ser 'altura + queda' e passou a ser o que o usuário
+     nomeia quando olha: o vidro de trás, o porta-malas e o para-choque. A
+     `barriga` é o quanto o vidro arqueia acima da reta entre o fim do teto e o
+     começo do porta-malas — no fastback ele arqueia pouco e vai longe. */
+  vidroTraseiro: { barriga: 70 },
+  portaMalas: { altura: 910, comprimento: 670, queda: 260 },
+  traseira: { alturaDoParachoque: 520 },
+  /* Mesma lição da saia: um ponto só no meio não faz linha reta, faz barriga —
+     aqui para baixo, com a soleira afundando entre as rodas. Dois pontos. */
+  soleira: { altura: 250, recuoDoArco: 260 },
   /* O fundo do carro à frente e atrás das rodas. `encosto` é o quanto o trecho
      reto avança em direção ao arco antes de a curva começar a subir. */
-  saia: { altura: 190, recuoDaPonta: 260, encosto: 60 },
+  /* A saia fica ACIMA da soleira, não abaixo. No alvo medido o fundo à frente e
+     atrás das rodas está mais alto que a soleira — o corpo levanta nas pontas.
+     Eu tinha invertido isso, e era a causa do carro se arrastar na frente e
+     atrás, inclusive do fundo traseiro que o usuário apontou. */
+  saia: { altura: 335, recuoDaPonta: 260, encosto: 60 },
 
   /* MEIA largura, sempre — a versão anterior misturava largura cheia no nariz
      com meia largura no para-lama e a planta saía com cara de pé. */
@@ -111,14 +128,16 @@ export function linhaDeCima(c) {
   const zBaseParaBrisa = e.dianteiro - c.capo.comprimento + c.balancoDianteiro;
   const zTopoParaBrisa = zBaseParaBrisa - c.paraBrisa.recuo;
   const zFimTeto = zTopoParaBrisa - c.teto.comprimento;
+  const zPortaMalas = p.tras + c.portaMalas.comprimento;
   return [
     { nome: 'ponta-do-nariz', z: p.frente, y: c.nariz.altura - c.nariz.quedaDaPonta },
     { nome: 'alto-do-nariz', z: p.frente - c.balancoDianteiro * 0.55, y: c.nariz.altura },
     { nome: 'capo-na-base', z: zBaseParaBrisa, y: c.capo.alturaNaBase },
     { nome: 'topo-do-para-brisa', z: zTopoParaBrisa, y: c.teto.altura },
     { nome: 'fim-do-teto', z: zFimTeto, y: c.teto.altura },
-    { nome: 'traseira-em-queda', z: zFimTeto - c.traseira.queda * 0.55, y: c.traseira.altura + (c.teto.altura - c.traseira.altura) * 0.35 },
-    { nome: 'ponta-da-traseira', z: p.tras, y: c.traseira.altura },
+    { nome: 'vidro-traseiro', z: (zFimTeto + zPortaMalas) / 2, y: (c.teto.altura + c.portaMalas.altura) / 2 + c.vidroTraseiro.barriga },
+    { nome: 'inicio-do-porta-malas', z: zPortaMalas, y: c.portaMalas.altura },
+    { nome: 'ponta-da-traseira', z: p.tras, y: c.portaMalas.altura - c.portaMalas.queda },
   ];
 }
 
@@ -139,16 +158,20 @@ export function linhaDeBaixo(c) {
   const raioDoArco = c.roda.raio + c.arco.folga;
   const encostoDianteiro = e.dianteiro + raioDoArco + c.saia.encosto;
   const encostoTraseiro = e.traseiro - raioDoArco - c.saia.encosto;
+  /* A soleira reta começa DEPOIS da transição do arco. Ela ficava colada nela, e
+     a curva não tinha espaço para descer do arco até a soleira sem dar um nó. */
+  const inicioDaSoleira = e.dianteiro - raioDoArco - c.arco.transicao - c.soleira.recuoDoArco;
   return [
-    { nome: 'ponta-do-parachoque', z: p.frente, y: c.nariz.altura - c.nariz.quedaDaPonta - 420 },
+    { nome: 'ponta-do-parachoque', z: p.frente, y: c.nariz.alturaDoParachoque },
     { nome: 'saia-dianteira-na-ponta', z: p.frente - c.saia.recuoDaPonta, y: c.saia.altura },
     { nome: 'saia-dianteira-no-arco', z: encostoDianteiro, y: c.saia.altura },
     ...arco(c, e.dianteiro, 'dianteiro', 'saida'),
-    { nome: 'soleira', z: 0, y: c.soleira.altura },
+    { nome: 'soleira-na-frente', z: inicioDaSoleira, y: c.soleira.altura },
+    { nome: 'soleira-atras', z: -inicioDaSoleira, y: c.soleira.altura },
     ...arco(c, e.traseiro, 'traseiro', 'entrada'),
     { nome: 'saia-traseira-no-arco', z: encostoTraseiro, y: c.saia.altura },
     { nome: 'saia-traseira-na-ponta', z: p.tras + c.saia.recuoDaPonta, y: c.saia.altura },
-    { nome: 'ponta-do-parachoque-traseiro', z: p.tras, y: c.traseira.altura - 430 },
+    { nome: 'ponta-do-parachoque-traseiro', z: p.tras, y: c.traseira.alturaDoParachoque },
   ];
 }
 

@@ -5,7 +5,7 @@
 > projeção. `npm run mapa:check` (CI) falha se isto estiver velho ou se
 > algum arquivo-fonte estiver sem cabeçalho.
 
-684 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
+685 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
 
 ## (raiz)
 
@@ -85,6 +85,7 @@
 - `carro.mjs` — carro.mjs — o carro inteiro como GRANDEZAS COM NOME.
 - `carro.test.mjs` — Provas do vocabulário. Nenhuma delas julga se o carro está bonito — isso é do usuário. Elas garantem que o laço não minta: que toda grandeza tenha frase, que…
 - `desenhar.mjs` — desenhar.mjs — as duas vistas que decidem proporção: lateral e planta.
+- `sobrepor.mjs` — sobrepor.mjs — o contorno do carro em cima do contorno do alvo.
 - `ver.mjs` — ver.mjs — uma rodada do laço em um comando.
 
 ## autoria-assistida/experimentos/prova-cage-direta-r2/
