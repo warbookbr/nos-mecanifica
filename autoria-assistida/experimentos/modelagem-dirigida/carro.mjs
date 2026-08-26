@@ -23,6 +23,8 @@ export const VOCABULARIO = {
   'alturaLivre': 'está alto / baixo do chão',
   'roda.raio': 'a roda está grande / pequena',
   'arco.folga': 'o arco está apertado / largo demais em volta da roda',
+  'arco.aberturaAbaixoDoCentro': 'o arco desce demais / de menos ao encontrar a lateral',
+  'arco.transicao': 'o arco encontra a lateral de forma abrupta / arredondada demais',
   'nariz.altura': 'o nariz está baixo / alto',
   'nariz.quedaDaPonta': 'a ponta da frente cai demais / é chata demais',
   'capo.comprimento': 'o capô está comprido / curto',
@@ -50,7 +52,7 @@ export const CARRO = {
   alturaLivre: 130,
 
   roda: { raio: 340, larguraDoArco: 250 },
-  arco: { folga: 45 },
+  arco: { folga: 45, aberturaAbaixoDoCentro: 30, transicao: 150 },
 
   balancoDianteiro: 930,
   balancoTraseiro: 930,
@@ -126,9 +128,9 @@ export function linhaDeBaixo(c) {
   return [
     { nome: 'ponta-do-parachoque', z: p.frente, y: c.nariz.altura - c.nariz.quedaDaPonta - 420 },
     { nome: 'saia-dianteira', z: p.frente - 260, y: c.alturaLivre + 60 },
-    ...arco(c, e.dianteiro, 'dianteiro'),
-    { nome: 'soleira', z: 0, y: c.soleira.altura - 40 },
-    ...arco(c, e.traseiro, 'traseiro'),
+    ...arco(c, e.dianteiro, 'dianteiro', 'saida'),
+    { nome: 'soleira', z: 0, y: c.soleira.altura },
+    ...arco(c, e.traseiro, 'traseiro', 'entrada'),
     { nome: 'saia-traseira', z: p.tras + 240, y: c.alturaLivre + 60 },
     { nome: 'ponta-do-parachoque-traseiro', z: p.tras, y: c.traseira.altura - 430 },
   ];
@@ -136,15 +138,24 @@ export function linhaDeBaixo(c) {
 
 /* O arco é um ARCO, e por isso é amostrado sobre um círculo em volta do centro
    da roda — não um ponto de pico entre dois pontos de base. Com um ponto só no
-   topo, a interpolação faz uma barraca pontuda, que foi exatamente a queixa
-   registrada nas tentativas anteriores ("o arco está quadrado / pontudo"). */
-function arco(c, zCentro, sufixo) {
+   topo, a interpolação faz uma barraca pontuda.
+
+   ONDE O ARCO TERMINA é a segunda decisão, e foi a causa da farpa que o usuário
+   marcou nos dois arcos, sempre do lado que encosta na soleira. O arco descia
+   até cruzar a altura da soleira, que fica ABAIXO do centro da roda: passando
+   do centro, o círculo começa a voltar para dentro, e essa parte reentrante
+   vira um gancho preso na soleira.
+
+   Carroceria de verdade não faz isso — a abertura do arco termina na altura do
+   centro da roda ou pouco abaixo, e daí em diante quem desce é a saia. Então a
+   parada do arco virou grandeza: `arco.aberturaAbaixoDoCentro`. */
+function arco(c, zCentro, sufixo, ladoDaSoleira) {
   const raioDoArco = c.roda.raio + c.arco.folga;
   const yCentro = c.roda.raio;
-  /* Onde o arco encontra a soleira: o ângulo em que o círculo cruza essa altura. */
-  const cosLimite = Math.max(-1, Math.min(1, (c.soleira.altura - yCentro) / raioDoArco));
+  const yParada = yCentro - c.arco.aberturaAbaixoDoCentro;
+  const cosLimite = Math.max(-1, Math.min(1, (yParada - yCentro) / raioDoArco));
   const limite = Math.acos(cosLimite);
-  const PASSOS = 8;
+  const PASSOS = 10;
   const pontos = [];
   for (let i = 0; i <= PASSOS; i++) {
     const ang = limite - (2 * limite * i) / PASSOS;
@@ -156,7 +167,20 @@ function arco(c, zCentro, sufixo) {
       y: yCentro + raioDoArco * Math.cos(ang),
     });
   }
-  return pontos;
+
+  /* TRANSIÇÃO, só do lado que encosta na SOLEIRA. Ali o arco termina quase na
+     vertical e o ponto seguinte é a soleira, quase na horizontal: a
+     interpolação não tem espaço para virar e devolve um laço enrolado sobre si
+     mesmo — o gancho que o usuário marcou nos dois arcos, sempre desse lado.
+     Este ponto dá à curva o comprimento de que ela precisa para deitar.
+
+     Do lado da saia não entra: lá a linha já desce, e forçar a transição criava
+     uma ondinha no lugar de um gancho — troca de defeito, não conserto. */
+  const primeiro = pontos[0], ultimo = pontos[pontos.length - 1];
+  if (ladoDaSoleira === 'entrada') {
+    return [{ nome: `antes-do-arco-${sufixo}`, z: primeiro.z + c.arco.transicao, y: primeiro.y }, ...pontos];
+  }
+  return [...pontos, { nome: `depois-do-arco-${sufixo}`, z: ultimo.z - c.arco.transicao, y: ultimo.y }];
 }
 
 /* Planta: meia largura ao longo de z. A cintura entre os para-lamas é o que
