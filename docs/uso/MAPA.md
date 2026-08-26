@@ -5,7 +5,7 @@
 > projeção. `npm run mapa:check` (CI) falha se isto estiver velho ou se
 > algum arquivo-fonte estiver sem cabeçalho.
 
-679 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
+684 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
 
 ## (raiz)
 
@@ -78,6 +78,14 @@
 - `README.md` — Canário N6 — casco por interseção de silhuetas
 - `canario-casco-visual.test.mjs` — O canário exige silhuetas de origem, uma única malha e veredito explicitamente pendente.
 - `construir-casco-visual.mjs` — Canário N6: casco-base por interseção de silhuetas, não por seções digitadas. É uma prova isolada e reprovável; não importa o núcleo procedural.
+
+## autoria-assistida/experimentos/modelagem-dirigida/
+
+- `README.md` — Modelagem dirigida — D0, o vocabulário do carro inteiro
+- `carro.mjs` — carro.mjs — o carro inteiro como GRANDEZAS COM NOME.
+- `carro.test.mjs` — Provas do vocabulário. Nenhuma delas julga se o carro está bonito — isso é do usuário. Elas garantem que o laço não minta: que toda grandeza tenha frase, que…
+- `desenhar.mjs` — desenhar.mjs — as duas vistas que decidem proporção: lateral e planta.
+- `ver.mjs` — ver.mjs — uma rodada do laço em um comando.
 
 ## autoria-assistida/experimentos/prova-cage-direta-r2/
 
