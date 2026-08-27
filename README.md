@@ -70,8 +70,17 @@ Ferramentas que vale nomear aqui porque não são óbvias pelo nome do arquivo, 
 - **construtor de contorno** (`.../modelagem-dirigida/contorno.mjs`, sobre
   `makerjs`) — monta o contorno com reta, arco e filete de raio, em vez de
   pontos entregues a um interpolador. Barriga, barraca pontuda, laço e degrau
-  deixam de ser representáveis. A `makerjs` é ferramenta de desenho e não entra
-  no núcleo; `arquitetura:check` reprova se entrar.
+  deixam de ser representáveis;
+- **conferente topológico** (`tools/mecanifica/conferente-topologico.mjs`, sobre
+  `manifold-3d`) — segunda opinião independente sobre uma malha que o núcleo já
+  produziu: é sólido de verdade, quanto volume, quantos buracos ATRAVESSAM, em
+  quantos pedaços. Ele nunca devolve geometria, só número e veredito.
+
+As duas últimas seguem o **critério de biblioteca externa** de
+[`docs/mecanifica/ARQUITETURA.md`](docs/mecanifica/ARQUITETURA.md): cabe
+biblioteca que devolve número ou veredito; não cabe a que devolve geometria
+nova, porque a autoridade de nomear face não se delega. `arquitetura:check`
+reprova se qualquer uma delas aparecer no núcleo.
 
 ## Estado
 

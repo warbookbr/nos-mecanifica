@@ -42,7 +42,11 @@ export function verificarIndependencia() {
        experimento de modelagem dirigida. Ela é ferramenta de desenho, não
        núcleo: se um dia aparecer importada aqui, o núcleo terá adquirido uma
        dependência de biblioteca externa sem ninguém decidir isso. */
-    ...ocorrencias([...motor, ...autoriaPura], /(?:from\s+['"]|import\s*\()['"]?makerjs/i, 'núcleo importa maker.js'),
+    /* As duas dependências que entraram pelo critério de ARQUITETURA.md ficam
+       FORA do núcleo: a makerjs desenha contorno 2D, a manifold-3d confere
+       malha pronta. Nenhuma das duas pode produzir peça aqui dentro — a
+       autoridade de nomear face não se delega. */
+    ...ocorrencias([...motor, ...autoriaPura], /(?:from\s+['"]|import\s*\()['"]?(?:makerjs|manifold-3d)/i, 'núcleo importa biblioteca externa de geometria'),
   ];
 }
 
@@ -54,5 +58,5 @@ if (chamadoDireto) {
     for (const problema of problemas) console.error(`  - ${problema}`);
     process.exit(1);
   }
-  console.log('arquitetura:check ok — núcleo e serviço puro não dependem do catálogo nem da maker.js');
+  console.log('arquitetura:check ok — núcleo e serviço puro não dependem do catálogo nem de biblioteca externa de geometria');
 }

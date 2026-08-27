@@ -33,6 +33,33 @@ A Oficina humana, a aplicação jogável e o som não existem nesta árvore.
    declarativas e montagens em catálogo autorizado. Nenhum perfil é o núcleo
    de autoria nem abre escrita irrestrita.
 
+## Critério de biblioteca externa
+
+O núcleo escreve as próprias operações e tem uma dependência de geometria só, a
+`earcut`. Isso não é falta de biblioteca: é o preço de um contrato. A operação
+`furo` declara, no próprio código, por que ela não é uma booleana genérica —
+"uma booleana genérica destrói a identidade de dezenas de faces de uma vez, em
+silêncio". Toda face criada nasce endereçável pela origem; toda face destruída
+fica registrada para a citação seguinte gritar em vez de devolver a peça pela
+metade.
+
+Toda biblioteca capaz de PRODUZIR forma devolve sopa de triângulos anônima. Ela
+faria a conta certa e jogaria fora exatamente o que o núcleo existe para
+preservar. Daí o critério, que vale para qualquer dependência futura:
+
+| forma da biblioteca | cabe? | exemplo |
+| --- | --- | --- |
+| recebe geometria, devolve **número ou veredito** | **sim**, em `tools/` | `manifold-3d` — volume, gênero, componentes, sólido ou não |
+| recebe dados estreitos, devolve dados estreitos, **sem decidir identidade** | **sim**, e pode chegar ao núcleo | `earcut` — recebe polígono, devolve triângulos; quem nomeia é o núcleo |
+| recebe geometria, devolve **geometria nova** | **não** | booleana de malha, kernel de CAD, CSG |
+| desenho 2D fora do núcleo | **sim**, fora dele | `makerjs` — contorno por reta, arco e filete |
+
+A terceira linha é a que importa: ela não é sobre qualidade da biblioteca, é
+sobre quem tem autoridade de nomear face. Essa autoridade não se delega.
+
+`arquitetura:check` guarda as duas dependências que já entraram por essa porta:
+nem `makerjs` nem `manifold-3d` podem aparecer no núcleo ou no serviço puro.
+
 ## Direção arquitetural
 
 A evolução para carros completos e, depois, robôs deve acrescentar camadas sem
