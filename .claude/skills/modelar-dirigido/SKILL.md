@@ -92,7 +92,31 @@ a seção é `centro`, `crista`, `bojoDoCapo`, `larguraMax`,
 `alturaDaLarguraMax`, `soleira` — não oitenta coordenadas. E
 `alteracao-local.mjs` altera por **nome de loop**, não por lista de vértices.
 
-### 3. Uma rodada muda uma coisa
+### 3. Contorno é reta, arco e filete — não ponto solto
+
+Todos os defeitos de forma desta fatia foram **o mesmo defeito**: pontos
+entregues a um interpolador que adivinha por onde passar entre eles. Ele
+adivinhou errado de cinco maneiras — fundo com barriga, soleira afundando, arco
+virando barraca pontuda, encontro dando laço, e degrau quando o laço foi
+afastado. Cada um foi "consertado" com mais um ponto, o que é tratar sintoma.
+
+A causa é a representação: ponto solto não carrega tangente, e sem tangente a
+curva entre dois pontos é palpite.
+
+Construa com **reta**, **arco** e **filete de raio**. Aí barriga e barraca não
+são representáveis, e quem calcula a tangente do encontro é a biblioteca. O
+ponto onde uma reta encontra um arco é **resolvido**, nunca digitado.
+
+A maker.js (Apache-2.0) sustenta isso, e
+`autoria-assistida/experimentos/modelagem-dirigida/contorno.mjs` é o exemplo
+vivo. Ela é ferramenta de desenho: **não entra no núcleo nem no serviço puro**,
+e `arquitetura:check` reprova se entrar.
+
+Curva livre — capô, para-brisa, teto, a queda de trás — ainda não passa por
+aqui. Enquanto não passar, ela continua sendo palpite do interpolador, e vale
+desconfiar dela na inspeção.
+
+### 4. Uma rodada muda uma coisa
 
 Duas mudanças juntas escondem qual delas estragou o resto. Se o usuário pedir
 três coisas, faça as três — mas devolva dizendo qual grandeza mudou em cada uma,

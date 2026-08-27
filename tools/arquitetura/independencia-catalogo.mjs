@@ -38,6 +38,11 @@ export function verificarIndependencia() {
   return [
     ...ocorrencias(motor, /(?:from\s+['"]|import\s*\()([^'"]*)(?:three|pecas\/)/i, 'motor importa catálogo/renderizador'),
     ...ocorrencias(autoriaPura, /node:(?:fs|path|url)|prototipos\/procedural\/v3\/pecas|src\/bancada|tools\//i, 'serviço puro conhece porta ou disco'),
+    /* A maker.js entrou em 2026-08-26 como construtor de contorno 2D no
+       experimento de modelagem dirigida. Ela é ferramenta de desenho, não
+       núcleo: se um dia aparecer importada aqui, o núcleo terá adquirido uma
+       dependência de biblioteca externa sem ninguém decidir isso. */
+    ...ocorrencias([...motor, ...autoriaPura], /(?:from\s+['"]|import\s*\()['"]?makerjs/i, 'núcleo importa maker.js'),
   ];
 }
 
@@ -49,5 +54,5 @@ if (chamadoDireto) {
     for (const problema of problemas) console.error(`  - ${problema}`);
     process.exit(1);
   }
-  console.log('arquitetura:check ok — núcleo e serviço puro não dependem do catálogo');
+  console.log('arquitetura:check ok — núcleo e serviço puro não dependem do catálogo nem da maker.js');
 }

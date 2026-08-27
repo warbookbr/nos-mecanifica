@@ -48,9 +48,8 @@ para a direção de composição.
 
 ## Ferramentas centrais
 
-Duas ferramentas que vale nomear aqui porque não são óbvias pelo nome do
-arquivo, e `docs/mecanifica/INDEX.md` (ver "Desenvolvimento" abaixo) tem o
-resto:
+Ferramentas que vale nomear aqui porque não são óbvias pelo nome do arquivo, e
+`docs/mecanifica/INDEX.md` (ver "Desenvolvimento" abaixo) tem o resto:
 
 - **motor de prancha** (`tools/mecanifica/prancha.mjs`, skill
   `desenhar-prancha`) — desenha o CONTORNO de referência de uma carroceria em
@@ -59,9 +58,20 @@ resto:
   `tools/mecanifica/comparar-alvo.mjs` sobrepõe esse desenho ao resultado
   modelado, para checar se um bate com o outro;
 - **crítico visual** (`.claude/agents/critico-visual.md`) — agente sem contexto
-  que só olha imagem e diz se o modelo bate com o alvo. Ver
+  que só olha imagem e diz se o modelo bate com o alvo. Desde 2026-08-26 ele é
+  peneira, não juiz: quem aprova forma é o usuário. Ver
   [`docs/mecanifica/REFERENCIA-E-CRITICA-VISUAL.md`](docs/mecanifica/REFERENCIA-E-CRITICA-VISUAL.md)
-  para o fluxo completo.
+  para o fluxo completo;
+- **roteiro de inspeção** (`autoria-assistida/experimentos/modelagem-dirigida/inspecionar.mjs`,
+  skill `modelar-dirigido`) — gera uma imagem POR ESTAÇÃO do carro (porta-malas,
+  arcos, fundo, bico, teto…), ampliada e com o alvo por baixo, cada uma
+  respondendo a uma pergunta. Existe porque o carro inteiro esconde defeito
+  local: todo defeito achado nesta investigação apareceu ampliando um pedaço;
+- **construtor de contorno** (`.../modelagem-dirigida/contorno.mjs`, sobre
+  `makerjs`) — monta o contorno com reta, arco e filete de raio, em vez de
+  pontos entregues a um interpolador. Barriga, barraca pontuda, laço e degrau
+  deixam de ser representáveis. A `makerjs` é ferramenta de desenho e não entra
+  no núcleo; `arquitetura:check` reprova se entrar.
 
 ## Estado
 

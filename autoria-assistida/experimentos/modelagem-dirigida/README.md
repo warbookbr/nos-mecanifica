@@ -43,17 +43,33 @@ tentativas anteriores voltaram a digitar coordenada.
 caminho que não existe, em vez de criar a grandeza em silêncio. Criar grandeza
 nova é decisão de rodada, não efeito colateral.
 
-## Os dois erros já cometidos aqui
+## Como o contorno é construído
 
-Ambos têm teste que impede a volta:
+Com **reta, arco e filete de raio**, pela `makerjs` — não com pontos entregues a
+um interpolador. Ver `contorno.mjs`, que traz o porquê inteiro.
+
+Resumo: todos os defeitos listados abaixo são o mesmo defeito visto de ângulos
+diferentes. Ponto solto não carrega tangente; sem tangente, a curva entre dois
+pontos é palpite. Com reta e arco, barriga e barraca não são representáveis;
+com filete, laço e degrau também não.
+
+A maker.js é ferramenta de desenho e não entra no núcleo — `arquitetura:check`
+reprova se entrar.
+
+A parte de cima do contorno (capô, para-brisa, teto, queda de trás) ainda é
+curva livre. Ela é o trecho a desconfiar na inspeção.
+
+## Os erros já cometidos aqui
+
+Todos têm teste que impede a volta:
 
 - **meia largura misturada com largura cheia.** O nariz entrava como largura
   total no meio de meias larguras e a planta saía com cara de pé.
 - **topo do arco abaixo do topo da roda.** O arco era posto em `raio + folga`
   medido do solo, mas a roda toca o solo e seu topo está em `2·raio`; a roda
-  saía para fora da carroceria. O arco também virou um arco amostrado sobre o
-  círculo da roda, porque com um ponto só no topo a interpolação fazia uma
-  barraca pontuda.
+  saía para fora da carroceria.
+- **barraca pontuda, barriga, soleira afundando, laço e degrau.** Cinco sintomas,
+  uma causa só: ponto solto sem tangente. Fechados por construção — ver acima.
 
 ## Estado
 

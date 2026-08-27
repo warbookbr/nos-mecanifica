@@ -57,6 +57,9 @@ fica congelada junto com o plano anterior, com condição de retorno escrita lá
   alteração — e isso é a entrega da rodada, não um detalhe.
 - **A malha vai junto quando a forma surpreender.** O fio conta como o objeto
   foi construído e prevê o defeito antes de ele aparecer.
+- **Contorno é reta, arco e filete**, não ponto solto. Onde uma reta encontra um
+  arco é resolvido, nunca digitado. Acrescentar mais um ponto para tirar um
+  sintoma é remendo, e foi o que consumiu as primeiras rodadas de D0.
 - **Uma rodada muda uma coisa.** Duas mudanças juntas escondem qual delas
   estragou o resto.
 - Determinismo, identidade semântica, núcleo sem Three.js e gates do INDEX
@@ -104,6 +107,19 @@ carro em lateral e superior. Sem arco redondo, sem vinco, sem fáscia.
 
 **Para se:** dez rodadas sem o usuário reconhecer avanço na proporção. Isso
 significa que o vocabulário de D0 está errado, não que a forma é difícil.
+
+### D1.5 — o contorno migra para reta-arco-filete
+
+A parte de baixo — saia, arco de roda, soleira — vira cadeia de retas, arcos e
+filetes. A parte de cima permanece curva livre até haver prova de que a mesma
+construção a serve; enquanto isso, ela é o trecho suspeito na inspeção.
+
+**Fecha quando:** o roteiro passa nas estações dos dois arcos e do fundo sem
+achar laço, degrau nem barriga.
+
+**Para se:** a construção por arcos não conseguir representar uma correção que o
+usuário pediu. Isso significaria que o vocabulário e a representação brigam, e a
+decisão volta para ele.
 
 ### D2 — arcos e volume
 

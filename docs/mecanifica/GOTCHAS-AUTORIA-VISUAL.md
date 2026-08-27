@@ -31,6 +31,7 @@ anunciar êxito, solicitar aprovação ou abrir a etapa seguinte.
 | Detector que devolve `passa` fora do seu escopo | Aprovação por vacuidade: o gate fica verde porque não tinha o que medir. | Fora de escopo devolve `naoAvaliavel` com motivo. Nunca `passa`. |
 | Crítico recebendo só o render | Sem o alvo ao lado, a única pergunta possível é "isso parece um carro?", e a resposta não aponta contra o quê. | Crítico recebe alvo, modelo e sobreposição, nos três caminhos. |
 | Alvo inventado pela IA usado como referência | Um número que a IA escolheu vira "medida" na rodada seguinte e ninguém confere. | Alvo sem procedência medida é `não vinculante` no próprio documento. |
+| Ponto solto entregue a interpolador | Sem tangente declarada, a curva entre dois pontos é palpite: fundo ganha barriga, soleira afunda, arco vira barraca, encontro dá laço, e afastar o laço deixa degrau. Cada um parece defeito diferente e todos são o mesmo. | Contorno se constrói com reta, arco e filete de raio. Ponto de encontro é resolvido, nunca digitado. Acrescentar mais um ponto para tirar o sintoma é remendo. |
 | Método diagnóstico aplicado a problema generativo | Sempre acha um defeito, então dá sensação de progresso enquanto a forma não anda. | Sintoma de parada: os achados encolhem e a nota não sobe. Ver `METODO-DIAGNOSTICO-E-SEU-LIMITE.md`. |
 
 ## Pipeline mínimo que vem antes de modelar

@@ -5,7 +5,7 @@
 > projeção. `npm run mapa:check` (CI) falha se isto estiver velho ou se
 > algum arquivo-fonte estiver sem cabeçalho.
 
-687 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
+689 arquivos (código `.js .mjs .cjs .ts .tsx .html` + docs `.md`).
 
 ## (raiz)
 
@@ -84,6 +84,8 @@
 - `README.md` — Modelagem dirigida — D0, o vocabulário do carro inteiro
 - `carro.mjs` — carro.mjs — o carro inteiro como GRANDEZAS COM NOME.
 - `carro.test.mjs` — Provas do vocabulário. Nenhuma delas julga se o carro está bonito — isso é do usuário. Elas garantem que o laço não minta: que toda grandeza tenha frase, que…
+- `contorno.mjs` — contorno.mjs — o contorno construído com RETA, ARCO e FILETE, não com pontos soltos entregues a um interpolador.
+- `contorno.test.mjs` — Provas de que a construção por reta-arco-filete elimina, POR CONSTRUÇÃO, a família de defeitos que consumiu esta fatia. Cada teste nomeia o defeito que ele i…
 - `desenhar.mjs` — desenhar.mjs — as duas vistas que decidem proporção: lateral e planta.
 - `inspecionar.mjs` — inspecionar.mjs — roda o roteiro e grava uma imagem POR ESTAÇÃO.
 - `roteiro.mjs` — roteiro.mjs — inspeção por estação, uma de cada vez.
