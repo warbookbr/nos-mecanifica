@@ -41,6 +41,26 @@ E declare, em voz alta, **que carro você está fazendo**. Se você não consegu
 dizer, o usuário também não consegue julgar — ele fica corrigindo detalhe de um
 objeto cujo destino ninguém declarou.
 
+## Roteiro de inspeção — uma estação de cada vez
+
+O conjunto serve para julgar proporção. Ele **não** serve para achar defeito
+local, e olhar o conjunto procurando defeito local é como esta investigação
+perdeu rodadas: todo defeito que apareceu — o gancho no encontro do arco com a
+soleira, a barriga no fundo à frente da roda, o degrau da soleira reta — foi
+achado ampliando um pedaço; nenhum foi achado olhando o carro inteiro.
+
+Então não olhe o carro inteiro procurando erro. Rode o roteiro: uma estação por
+vez, ampliada, com o alvo por baixo, cada uma respondendo a UMA pergunta. A
+ordem é fixa e é a do usuário, para que nada seja pulado por conveniência.
+
+`autoria-assistida/experimentos/modelagem-dirigida/inspecionar.mjs` gera uma
+imagem por estação; `roteiro.mjs` declara as estações e a pergunta de cada uma,
+com a janela derivada das grandezas — assim ela acompanha o carro quando ele
+muda.
+
+Relate estação por estação, com o nome dela. "Achei um defeito na traseira" não
+é relato; "porta-malas: é uma rampa, não tem parte plana" é.
+
 ## As três regras
 
 ### 1. Proporção se julga na lateral e na superior
