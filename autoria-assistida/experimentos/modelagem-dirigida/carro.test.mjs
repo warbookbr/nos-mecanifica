@@ -52,16 +52,23 @@ describe('alterar por nome', () => {
 });
 
 describe('silhueta lateral', () => {
-  it('o arco cobre a roda inteira — o topo do arco fica acima do topo da roda', () => {
+  it('o arco cobre a roda inteira — nenhum ponto do arco passa por dentro dela', () => {
+    /* A prova deixou de procurar um ponto chamado 'topo-do-arco' e passou a
+       medir a propriedade: a linha de baixo, na faixa do arco, nunca entra no
+       círculo da roda. Nome de ponto é detalhe de construção e mudou quando o
+       contorno virou reta-arco-filete; a propriedade não muda. */
+    const baixo = linhaDeBaixo(CARRO);
     for (const r of rodas(CARRO)) {
-      const topoDaRoda = r.y + r.raio;
-      const topo = linhaDeBaixo(CARRO).find((q) => q.nome === `topo-do-arco-${r.nome === 'dianteira' ? 'dianteiro' : 'traseiro'}`);
-      expect(topo.y).toBeGreaterThan(topoDaRoda);
+      const naFaixa = baixo.filter((q) => Math.abs(q.z - r.z) < r.raio * 0.8);
+      expect(naFaixa.length).toBeGreaterThan(4);
+      for (const q of naFaixa) {
+        expect(Math.hypot(q.z - r.z, q.y - r.y)).toBeGreaterThanOrEqual(r.raio - 1e-6);
+      }
     }
   });
 
   it('o arco é amostrado como arco, não como um pico entre duas bases', () => {
-    const meio = linhaDeBaixo(CARRO).filter((q) => q.nome.startsWith('arco-dianteiro-'));
+    const meio = linhaDeBaixo(CARRO).filter((q) => q.nome.startsWith('arco-dianteiro'));
     expect(meio.length).toBeGreaterThanOrEqual(6);
   });
 

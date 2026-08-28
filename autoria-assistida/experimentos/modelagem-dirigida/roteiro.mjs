@@ -40,12 +40,12 @@ export function estacoes(c) {
     {
       nome: 'arco-traseiro',
       pergunta: 'o arco é redondo, cobre a roda e encontra a lateral sem gancho nem degrau?',
-      de: e.traseiro + raioDoArco + c.arco.transicao + 250, ate: e.traseiro - raioDoArco - c.saia.encosto - 250,
+      de: e.traseiro + raioDoArco + c.arco.raioDoFilete + 250, ate: e.traseiro - raioDoArco - c.arco.raioDoFilete - 250,
     },
     {
       nome: 'arco-dianteiro',
       pergunta: 'o arco é redondo, cobre a roda e encontra a lateral sem gancho nem degrau?',
-      de: e.dianteiro + raioDoArco + c.saia.encosto + 250, ate: e.dianteiro - raioDoArco - c.arco.transicao - 250,
+      de: e.dianteiro + raioDoArco + c.arco.raioDoFilete + 250, ate: e.dianteiro - raioDoArco - c.arco.raioDoFilete - 250,
     },
     {
       nome: 'fundo-no-meio',

@@ -45,17 +45,28 @@ export function lateral(c, { largura = 1100, mostrarNomes = false } = {}) {
 
   const cima = linhaDeCima(c);
   const baixo = linhaDeBaixo(c);
-  const contorno = [...cima.map((q) => [X(q.z), Y(q.y)]), ...baixo.slice().reverse().map((q) => [X(q.z), Y(q.y)])];
+  /* A linha de cima é curva livre e precisa de suavização. A de baixo NÃO: ela
+     já sai pronta de `contorno.mjs`, com reta, arco e filete resolvidos, e
+     suavizar de novo o que já está resolvido reintroduz o defeito — a curva
+     estoura nos cantos vivos do para-choque e sobra um risco solto sob a
+     soleira. Cada metade é desenhada como o que ela é. */
+  const emTela = (q) => [X(q.z), Y(q.y)];
+  const reta = (pts) => pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
 
   const roda = rodas(c).map((r) => `<circle cx="${X(r.z).toFixed(1)}" cy="${Y(r.y).toFixed(1)}" r="${(r.raio * esc).toFixed(1)}" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="7 5"/>`).join('');
 
   const nomes = mostrarNomes
     ? [...cima, ...baixo].map((q) => `<circle cx="${X(q.z).toFixed(1)}" cy="${Y(q.y).toFixed(1)}" r="3" fill="#c0392b"/><text x="${(X(q.z) + 6).toFixed(1)}" y="${(Y(q.y) - 6).toFixed(1)}" font-family="ui-sans-serif,system-ui" font-size="10" fill="#8a5a52">${q.nome}</text>`).join('')
     : '';
+  /* O trecho de baixo continua o caminho de cima, então ele começa com L e não
+     com M. Trocar a letra é obrigatório: cortar o primeiro caractere deixa o
+     par de coordenadas solto, o SVG o engole como argumento extra do comando
+     anterior, e o contorno inteiro degenera numa diagonal. */
+  const caminho = `${suave(cima.map(emTela))} ${reta(baixo.slice().reverse().map(emTela)).replace(/^M/, 'L')} Z`;
 
   const corpo = `<line x1="${MARGEM - 10}" y1="${Y(0)}" x2="${largura - MARGEM + 10}" y2="${Y(0)}" stroke="#d8d8d4"/>
 ${roda}
-<path d="${suave(contorno, true)}" fill="#5b6b8a" fill-opacity="0.85" stroke="#33405a" stroke-width="2"/>
+<path d="${caminho}" fill="#5b6b8a" fill-opacity="0.85" stroke="#33405a" stroke-width="2"/>
 ${nomes}`;
   return moldura(largura, altura, 'lateral — frente à esquerda · rodas em vermelho são apoio de leitura, não carroceria', corpo);
 }

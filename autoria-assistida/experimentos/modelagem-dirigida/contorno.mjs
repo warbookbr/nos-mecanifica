@@ -94,3 +94,62 @@ export function amostrar(caminho, passos = 24) {
 export function amostrarModelo(modelo, passos = 24) {
   return Object.values(modelo.paths).flatMap((p) => amostrar(p, passos));
 }
+
+/* --- a parte de baixo do carro inteira, como uma cadeia só --- */
+
+/* Ela vai do para-choque dianteiro ao traseiro passando pelos dois arcos e pela
+   soleira, e é montada com retas, arcos e filetes. Nada aqui é ponto solto.
+
+   A ASSIMETRIA DOS ARCOS, que o usuário apontou no roteiro, tinha uma causa
+   boba: um lado do arco encontrava a soleira e o outro encontrava a saia, que
+   estão em alturas diferentes, e só um dos lados tinha transição. Agora os dois
+   lados são filete, do mesmo raio, e a diferença de altura entre soleira e saia
+   aparece onde ela é de verdade — no corpo, longe da boca do arco. */
+export function parteDeBaixo(c) {
+  const eixoDianteiro = c.entreEixos / 2, eixoTraseiro = -c.entreEixos / 2;
+  const frente = eixoDianteiro + c.balancoDianteiro, tras = eixoTraseiro - c.balancoTraseiro;
+  const raioDoArco = c.roda.raio + c.arco.folga;
+  const centroDaSoleira = 0;
+
+  const dianteiro = arcoDeRoda({
+    centroDaRoda: [eixoDianteiro, c.roda.raio], raioDoArco,
+    alturaDaFrente: c.saia.altura, alturaDeTras: c.soleira.altura,
+    ateFrente: frente - c.saia.recuoDaPonta, ateTras: centroDaSoleira,
+    raioDoFilete: c.arco.raioDoFilete,
+  });
+  const traseiro = arcoDeRoda({
+    centroDaRoda: [eixoTraseiro, c.roda.raio], raioDoArco,
+    alturaDaFrente: c.soleira.altura, alturaDeTras: c.saia.altura,
+    ateFrente: centroDaSoleira, ateTras: tras + c.saia.recuoDaPonta,
+    raioDoFilete: c.arco.raioDoFilete,
+  });
+
+  /* Amostrar e ordenar da frente para trás. A cadeia sai da maker.js sem
+     direção garantida — arco anti-horário vem invertido — então a ordem é
+     imposta aqui, uma vez, em vez de cada consumidor adivinhar. */
+  const trechos = [
+    ['parachoque-dianteiro', [[frente, c.nariz.alturaDoParachoque], [frente, c.saia.altura]]],
+    ['saia-dianteira', amostrar(dianteiro.paths.linhaDaFrente)],
+    ['filete-antes-do-arco-dianteiro', amostrar(dianteiro.paths.fileteDaFrente, 8)],
+    ['arco-dianteiro', amostrar(dianteiro.paths.arco, 28)],
+    ['filete-depois-do-arco-dianteiro', amostrar(dianteiro.paths.fileteDeTras, 8)],
+    ['soleira-dianteira', amostrar(dianteiro.paths.linhaDeTras)],
+    ['soleira-traseira', amostrar(traseiro.paths.linhaDaFrente)],
+    ['filete-antes-do-arco-traseiro', amostrar(traseiro.paths.fileteDaFrente, 8)],
+    ['arco-traseiro', amostrar(traseiro.paths.arco, 28)],
+    ['filete-depois-do-arco-traseiro', amostrar(traseiro.paths.fileteDeTras, 8)],
+    ['saia-traseira', amostrar(traseiro.paths.linhaDeTras)],
+    ['parachoque-traseiro', [[tras, c.saia.altura], [tras, c.traseira.alturaDoParachoque]]],
+  ];
+
+  const saida = [];
+  for (const [nome, pontos] of trechos) {
+    const ordenado = pontos[0][0] >= pontos[pontos.length - 1][0] ? pontos : [...pontos].reverse();
+    ordenado.forEach(([z, y], i) => {
+      const ultimo = saida[saida.length - 1];
+      if (ultimo && Math.hypot(ultimo.z - z, ultimo.y - y) < 1e-6) return;
+      saida.push({ nome: i === 0 ? nome : `${nome}-${i}`, z, y });
+    });
+  }
+  return saida;
+}
