@@ -57,6 +57,15 @@ preservar. Daí o critério, que vale para qualquer dependência futura:
 A terceira linha é a que importa: ela não é sobre qualidade da biblioteca, é
 sobre quem tem autoridade de nomear face. Essa autoridade não se delega.
 
+**A porta é evidência, não narrativa.** Passar pela tabela acima não basta: a
+dependência precisa fechar uma lacuna que alguém consiga apontar num defeito
+real. Uma biblioteca já foi barrada por essa regra — a `fast-check`, em
+2026-08-26, pedida com uma justificativa que não sobreviveu à conferência; a
+busca por evidência nova varreu 1500 casos gerados sobre cubo, cilindro,
+esfera, cone e furo passante, e o núcleo não falhou em nenhum. O resultado
+negativo fica registrado: é a primeira medida ampla de robustez do núcleo por
+faixa de parâmetro.
+
 `arquitetura:check` guarda as duas dependências que já entraram por essa porta:
 nem `makerjs` nem `manifold-3d` podem aparecer no núcleo ou no serviço puro.
 
