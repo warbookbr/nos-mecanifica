@@ -10,6 +10,12 @@ está boa**, dizendo em linguagem comum o que está errado, e a IA executa a
 correção alterando grandezas com nome. Nenhuma métrica aprova forma. O laço está
 descrito em [`../../../.claude/skills/modelar-dirigido/SKILL.md`](../../../.claude/skills/modelar-dirigido/SKILL.md).
 
+**Concluído e aprovado:**
+[`2026-08-28-exportacao-cad-step.md`](2026-08-28-exportacao-cad-step.md) —
+entregou os módulos puros `modulos/exportador-cad/` e `modulos/exportador-obj/`,
+as CLIs `npm run exportar:step` e `npm run exportar:obj` com escrita atômica, e a
+ativação da bancada por sessão (`npm run ativar:bancada`).
+
 O [modelador inverso com priors por família](congelados/2026-08-25-modelador-inverso-priors-familia.md)
 foi **congelado** em 2026-08-26, não cancelado. Ele não foi refutado: sua
 primeira fase existia para provar que uma IA julga forma de modo confiável, e
