@@ -328,3 +328,44 @@ quase iguais é decisão falsa.
 
 Todo resultado sai com o aviso: coincidir com uma forma não explica por quê —
 duas causas diferentes produzem a mesma curva o tempo todo.
+
+## Primeiro estudo de material — e ele discordou de mim
+
+A pergunta: a regra das misturas serve para estimar a densidade de um aço
+inoxidável austenítico, e se erra, para que lado erra? Ela é pequena, tem
+resposta conhecida fora do laboratório, e a conta tem uma hipótese declarada que
+pode estar errada — os volumes se somarem sem mudar ao misturar. Um primeiro
+estudo que só confirmasse o esperado não testaria nada.
+
+**Resultado, com o critério fixado antes de calcular:** previsto 7,796 g/cm³
+contra referência 8,00 — erro de 2,55%, acima do 1% aceitável. A hipótese de
+acerto ficou **contradita**; a hipótese de que a regra *subestima* ficou
+sustentada. O sentido do erro é exatamente o que se espera quando a hipótese de
+volumes aditivos falha: a austenita é mais compacta do que a soma dos volumes.
+
+### O canário matou uma afirmação minha
+
+Eu escrevi, no próprio instrumento, que a prova era **exata ao último dígito** e
+que por isso não dependia de tolerância escolhida por mim. O canário reprovou:
+`1/(1/7,874)` devolve 7,873999999999999, porque o inverso do inverso não volta ao
+mesmo binário. A tolerância é inevitável — mas é a do ponto flutuante, alguns
+ulps, e não um número escolhido para o teste passar. A diferença entre essas duas
+coisas separa canário de encenação, e eu quase escrevi a segunda.
+
+O canário ganhou um terceiro caso na correção: a mistura tem de cair **entre** as
+densidades dos componentes. Erro de sinal ou de inversão passa pelos dois
+primeiros casos e é pego só por esse.
+
+### O limite que vale mais que o resultado
+
+**Nenhum aço foi pesado.** Isto compara uma conta com um valor de manual que veio
+da minha memória, não conferido contra fonte primária — não há rede garantida
+neste ambiente. As densidades dos elementos ficam isoladas numa constante,
+marcadas, justamente para serem fáceis de trocar por dado com fonte; há teste que
+prova que trocar a entrada muda o resultado, ou seja, que o número de manual não
+está cravado na conta.
+
+Enquanto for assim, o laboratório é andaime bem feito segurando dado que saiu de
+mim. Ele vira sério quando encostar em cálculo rodado de verdade ou em valor
+puxado de banco público com fonte — e as duas coisas dependem da máquina do
+usuário, não deste ambiente.
