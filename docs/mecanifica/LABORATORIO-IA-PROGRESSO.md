@@ -349,3 +349,48 @@ testado: consulta feita onde há rede, cache trazido, resposta aqui sem rede.
 
 A versão do banco entra na chave do cache, porque o mesmo pedido a despejos
 diferentes é outra consulta, e reaproveitar misturaria duas fontes numa.
+
+## Rigidez de policristal — a primeira incerteza que não saiu de mim
+
+Um metal real é um monte de grãozinhos, cada um com orientação diferente. O
+cristal isolado é anisotrópico; a peça, com milhões de grãos apontando para todo
+lado, se comporta como isotrópica. Quanto vale essa rigidez média?
+
+**Voigt e Reuss não são estimativas: são limites provados.** Voigt supõe
+deformação igual em todos os grãos e dá o valor mais alto possível; Reuss supõe
+tensão igual e dá o mais baixo. O material real fica entre os dois por
+demonstração, não por chute.
+
+Isso é o que faz este instrumento valer mais que os outros: **a largura entre os
+limites é uma incerteza provada**, e é a primeira deste laboratório que não veio
+de mim declarando um número. Hill, a média dos dois, é o palpite usual — e sai
+marcado `estimativa, não limite`, entre os limites que valem de verdade.
+
+### Duas coisas que os números mostraram
+
+Para o ferro α, Hill dá E ≈ 203 GPa e ν ≈ 0,30. O valor conhecido de aço é
+200–210 GPa. Não foi forçado: saiu das constantes do cristal, e virou teste.
+
+E o mais interessante: **num cristal cúbico o módulo volumétrico não tem
+incerteza nenhuma** — Reuss e Voigt dão exatamente o mesmo — enquanto o de
+cisalhamento abre 22,7%. Toda a anisotropia vai para o cisalhamento. Isso é
+identidade, não aproximação, e agora tem teste cobrando.
+
+### O canário e o caso que ele precisava ter
+
+O caso forte é um cristal isotrópico por construção (C44 = (C11−C12)/2): sem
+anisotropia, Voigt tem de ser **igual** a Reuss, e um erro em qualquer das quatro
+fórmulas abre uma fresta que não deveria existir. O canário também cobra o
+contrário — um cristal anisotrópico tem de abrir fresta —, porque sem isso a
+conta poderia estar devolvendo a mesma coisa duas vezes sem ninguém notar.
+
+E há uma recusa que existe só por honestidade: se Voigt sair abaixo de Reuss, o
+instrumento grita. É matematicamente impossível, então é prova de erro — e
+devolver um intervalo invertido seria pior, porque alguém leria aquilo como
+incerteza.
+
+### Escrito do zero, e é a política
+
+As fórmulas são públicas e antigas; o código é nosso, inclusive a inversão 6×6.
+Método publicado não é obra derivada de código de ninguém: assim o resultado fica
+MIT sem herdar licença de pacote GPL, e sem depender de instalar nada.
